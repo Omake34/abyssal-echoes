@@ -1,0 +1,119 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scenes/demos/demo_grid_slot.gd" id="1_slot"]
+
+[sub_resource type="StyleBoxFlat" id="SlotStyle"]
+bg_color = Color(0.15, 0.15, 0.15, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.3, 0.3, 0.3, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[node name="DemoGrid" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="Label" type="Label" parent="CenterContainer/VBoxContainer"]
+layout_mode = 2
+text = "Formation Grid (3x2)
+Drag the colored boxes to move heroes!"
+horizontal_alignment = 1
+
+[node name="GridContainer" type="GridContainer" parent="CenterContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/h_separation = 10
+theme_override_constants/v_separation = 10
+columns = 2
+
+[node name="Slot1" type="PanelContainer" parent="CenterContainer/VBoxContainer/GridContainer"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+theme_override_styles/panel = SubResource("SlotStyle")
+script = ExtResource("1_slot")
+slot_id = 1
+
+[node name="Icon" type="ColorRect" parent="CenterContainer/VBoxContainer/GridContainer/Slot1"]
+layout_mode = 2
+mouse_filter = 2
+color = Color(0.8, 0.2, 0.2, 1)
+
+[node name="Slot2" type="PanelContainer" parent="CenterContainer/VBoxContainer/GridContainer"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+theme_override_styles/panel = SubResource("SlotStyle")
+script = ExtResource("1_slot")
+slot_id = 2
+
+[node name="Icon" type="ColorRect" parent="CenterContainer/VBoxContainer/GridContainer/Slot2"]
+layout_mode = 2
+mouse_filter = 2
+color = Color(0.2, 0.8, 0.2, 1)
+
+[node name="Slot3" type="PanelContainer" parent="CenterContainer/VBoxContainer/GridContainer"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+theme_override_styles/panel = SubResource("SlotStyle")
+script = ExtResource("1_slot")
+slot_id = 3
+
+[node name="Icon" type="ColorRect" parent="CenterContainer/VBoxContainer/GridContainer/Slot3"]
+layout_mode = 2
+mouse_filter = 2
+color = Color(0.2, 0.2, 0.8, 1)
+
+[node name="Slot4" type="PanelContainer" parent="CenterContainer/VBoxContainer/GridContainer"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+theme_override_styles/panel = SubResource("SlotStyle")
+script = ExtResource("1_slot")
+slot_id = 4
+
+[node name="Icon" type="ColorRect" parent="CenterContainer/VBoxContainer/GridContainer/Slot4"]
+visible = false
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Slot5" type="PanelContainer" parent="CenterContainer/VBoxContainer/GridContainer"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+theme_override_styles/panel = SubResource("SlotStyle")
+script = ExtResource("1_slot")
+slot_id = 5
+
+[node name="Icon" type="ColorRect" parent="CenterContainer/VBoxContainer/GridContainer/Slot5"]
+visible = false
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Slot6" type="PanelContainer" parent="CenterContainer/VBoxContainer/GridContainer"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+theme_override_styles/panel = SubResource("SlotStyle")
+script = ExtResource("1_slot")
+slot_id = 6
+
+[node name="Icon" type="ColorRect" parent="CenterContainer/VBoxContainer/GridContainer/Slot6"]
+visible = false
+layout_mode = 2
+mouse_filter = 2

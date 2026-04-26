@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="EnemyData" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/enemies/EnemyData.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "goblin"
+display_name = "Goblin"
+description = "A scrappy little menace. Low HP but fast — it'll get a few hits in before you put it down."
+is_boss = false
+placeholder_color = Color(0.2, 0.6, 0.1, 1)
+base_hp = 40
+base_atk = 8
+base_def = 2
+base_magic_def = 1
+base_speed = 7
+targeting_strategy = "random"
+skill_ids = []
+skill_use_chance = 0.1
+gold_drop_min = 4
+gold_drop_max = 10
+loot_table = [{"id": "slash", "weight": 10}, {"id": "magic_bolt", "weight": 5}]
+boss_guaranteed_drop_id = ""
+sprite_path = ""

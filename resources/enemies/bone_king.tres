@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="EnemyData" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/enemies/EnemyData.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "bone_king"
+display_name = "Bone King"
+description = "The ruler of Chapter 1's undead army. He hits hard, targets weakened heroes, and carries a guaranteed skill drop."
+is_boss = true
+placeholder_color = Color(0.9, 0.7, 0.1, 1)
+base_hp = 280
+base_atk = 22
+base_def = 10
+base_magic_def = 8
+base_speed = 3
+targeting_strategy = "lowest_hp"
+skill_ids = ["power_strike"]
+skill_use_chance = 0.5
+gold_drop_min = 40
+gold_drop_max = 60
+loot_table = [{"id": "fireball", "weight": 10}, {"id": "power_strike", "weight": 10}]
+boss_guaranteed_drop_id = "fireball"
+sprite_path = ""

@@ -1,0 +1,82 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scenes/battle/BattleScene.gd" id="1_batl"]
+[ext_resource type="Script" path="res://scripts/battle/BattleManager.gd" id="2_mgr"]
+
+[node name="BattleScene" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_batl")
+
+[node name="BattleManager" type="Node" parent="."]
+script = ExtResource("2_mgr")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.12, 0.12, 0.12, 1)
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="HeroSide" type="VBoxContainer" parent="HBoxContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="Label" type="Label" parent="HBoxContainer/HeroSide"]
+layout_mode = 2
+text = "HEROES"
+
+[node name="HeroGrid" type="GridContainer" parent="HBoxContainer/HeroSide"]
+layout_mode = 2
+columns = 2
+
+[node name="VS" type="Label" parent="HBoxContainer"]
+layout_mode = 2
+text = " VS "
+
+[node name="EnemySide" type="VBoxContainer" parent="HBoxContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="Label" type="Label" parent="HBoxContainer/EnemySide"]
+layout_mode = 2
+text = "ENEMIES"
+
+[node name="EnemyGrid" type="GridContainer" parent="HBoxContainer/EnemySide"]
+layout_mode = 2
+columns = 2
+
+[node name="LogPanel" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -150.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="LogLabel" type="RichTextLabel" parent="LogPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+bbcode_enabled = true
+text = "Battle initialized..."

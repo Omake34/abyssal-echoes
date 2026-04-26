@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="EnemyData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/enemies/EnemyData.gd" id="1_enemy"]
+
+[resource]
+script = ExtResource("1_enemy")
+id = "slime"
+display_name = "Dark Slime"
+description = "A basic dungeon dweller."
+placeholder_color = Color(0.4, 0.2, 0.6, 1)
+base_hp = 120
+base_atk = 8
+base_def = 2
+base_magic_def = 1
+base_speed = 3
+gold_drop_min = 5
+gold_drop_max = 10
+exp_reward = 20
+skill_use_chance = 0.0
+skills = Array[Resource]([])

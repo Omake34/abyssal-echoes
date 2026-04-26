@@ -1,0 +1,30 @@
+[gd_resource type="Resource" script_class="HeroData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/heroes/HeroData.gd" id="1_hero"]
+
+[resource]
+script = ExtResource("1_hero")
+id = "warrior"
+display_name = "Ironclad Warrior"
+description = "A sturdy frontline fighter with high defense."
+hero_class = "warrior"
+placeholder_color = Color(0.8, 0.2, 0.2, 1)
+base_hp = 150
+base_atk = 15
+base_magic_atk = 0
+base_def = 10
+base_magic_def = 5
+base_speed = 4
+base_crit_chance = 0.05
+base_crit_multiplier = 1.5
+base_evasion = 0.0
+base_heal_power = 0.0
+skill_slots = 3
+starting_skills = Array[Resource]([])
+trait_name = "Bastion"
+trait_description = "Reduces physical damage taken by 10%."
+trait_effect_id = "damage_reduction"
+preferred_row = "front"
+unlocked_by_default = true
+unlock_condition = ""
+sprite_path = ""

@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="SkillData" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/skills/SkillData.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "fireball"
+display_name = "Fireball"
+description = "Launches a fireball that hits ALL enemies for 1.2x Magic ATK. Powerful crowd control."
+tier = 2
+skill_type = "magic"
+target_type = "all_enemies"
+effect_id = "damage_magic_mult"
+power = 1.2
+power_secondary = 0.0
+uses_per_battle = 0
+cooldown_ticks = 5
+can_merge = true
+merge_result_id = ""
+ex_ingredient_a = ""
+ex_ingredient_b = ""
+icon_path = ""
+vfx_id = "fireball_vfx"

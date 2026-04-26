@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="SkillData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/skills/SkillData.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "power_strike"
+display_name = "Power Strike"
+description = "A heavy blow dealing 200% ATK to a single enemy. Longer cooldown."
+tier = 1
+skill_type = "physical"
+target_type = "single_enemy"
+effect_id = "damage_atk_mult"
+power = 2.0
+power_secondary = 0.0
+uses_per_battle = 0
+cooldown_ticks = 4
+can_merge = true
+merge_result_id = ""
+ex_ingredient_a = ""
+ex_ingredient_b = ""
+icon_path = ""
+vfx_id = "heavy_hit_vfx"

@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="SkillData" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/skills/SkillData.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "magic_bolt"
+display_name = "Magic Bolt"
+description = "Hurls a bolt of dark energy dealing 25 magic damage to one enemy. Ignores physical defense."
+tier = 1
+skill_type = "magic"
+target_type = "single_enemy"
+effect_id = "damage_magic_mult"
+power = 1.5
+power_secondary = 0.0
+uses_per_battle = 0
+cooldown_ticks = 2
+can_merge = true
+merge_result_id = ""
+ex_ingredient_a = ""
+ex_ingredient_b = ""
+icon_path = ""
+vfx_id = "magic_bolt_vfx"

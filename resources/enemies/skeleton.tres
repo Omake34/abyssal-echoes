@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="EnemyData" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/enemies/EnemyData.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "skeleton"
+display_name = "Skeleton"
+description = "Reassembled from old bones. Tougher than a goblin, and it has a knack for targeting weakened heroes."
+is_boss = false
+placeholder_color = Color(0.85, 0.85, 0.75, 1)
+base_hp = 55
+base_atk = 10
+base_def = 5
+base_magic_def = 2
+base_speed = 4
+targeting_strategy = "lowest_hp"
+skill_ids = []
+skill_use_chance = 0.15
+gold_drop_min = 6
+gold_drop_max = 14
+loot_table = [{"id": "power_strike", "weight": 8}, {"id": "rally", "weight": 6}]
+boss_guaranteed_drop_id = ""
+sprite_path = ""
