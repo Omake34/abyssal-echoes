@@ -35,3 +35,8 @@ layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 0)
 value = 100.0
 show_percentage = false
+
+[node name="SkillsContainer" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+alignment = 1
+theme_override_constants/separation = 2

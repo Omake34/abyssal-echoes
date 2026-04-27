@@ -40,14 +40,26 @@ alignment = 1
 [node name="Label" type="Label" parent="HBoxContainer/HeroSide"]
 layout_mode = 2
 text = "HEROES"
+horizontal_alignment = 1
 
 [node name="HeroGrid" type="GridContainer" parent="HBoxContainer/HeroSide"]
 layout_mode = 2
-columns = 2
+columns = 3
 
-[node name="VS" type="Label" parent="HBoxContainer"]
+[node name="PreparationUI" type="VBoxContainer" parent="HBoxContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="VS" type="Label" parent="HBoxContainer/PreparationUI"]
 layout_mode = 2
 text = " VS "
+horizontal_alignment = 1
+
+[node name="StartBattleButton" type="Button" parent="HBoxContainer/PreparationUI"]
+custom_minimum_size = Vector2(120, 50)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.2, 1, 0.2, 1)
+text = "START BATTLE"
 
 [node name="EnemySide" type="VBoxContainer" parent="HBoxContainer"]
 layout_mode = 2
@@ -56,12 +68,46 @@ alignment = 1
 [node name="Label" type="Label" parent="HBoxContainer/EnemySide"]
 layout_mode = 2
 text = "ENEMIES"
+horizontal_alignment = 1
 
 [node name="EnemyGrid" type="GridContainer" parent="HBoxContainer/EnemySide"]
 layout_mode = 2
-columns = 2
+columns = 3
+
+[node name="InventoryPanel" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -150.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="InventoryPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Label" type="Label" parent="InventoryPanel/VBoxContainer"]
+layout_mode = 2
+text = "INVENTORY (Skills)"
+horizontal_alignment = 1
+
+[node name="ScrollContainer" type="ScrollContainer" parent="InventoryPanel/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="InventoryGrid" type="HFlowContainer" parent="InventoryPanel/VBoxContainer/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
 
 [node name="LogPanel" type="Panel" parent="."]
+visible = false
 layout_mode = 1
 anchors_preset = 12
 anchor_top = 1.0

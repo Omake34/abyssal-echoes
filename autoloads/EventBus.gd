@@ -50,10 +50,10 @@ signal merge_completed(result_skill: Resource)
 # ── RUN / MAP SIGNALS ─────────────────────────────────────────────────────────
 
 ## Emitted when the player selects a map node to travel to
-signal map_node_selected(node_id: int)
+signal map_node_selected(node_id: String)
 
 ## Emitted when a node's encounter is fully resolved
-signal node_completed(node_id: int)
+signal node_completed(node_id: String)
 
 ## Emitted when the full run ends (victory or defeat)
 signal run_ended(victory: bool, stats: Dictionary)

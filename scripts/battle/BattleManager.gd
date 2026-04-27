@@ -42,31 +42,37 @@ var _running: bool = false
 
 # ── SETUP ─────────────────────────────────────────────────────────────────────
 
-## Call this to initialize and start a battle.
-## Pass in the party from RunState and an array of EnemyData resources.
-func start_battle(party: Array, enemy_data_list: Array) -> void:
+## Initializes the battle state, setting up combatant dictionaries.
+## Does NOT start the timer. Call begin_combat() to start fighting.
+func init_battle(party: Array, enemy_data_list: Array) -> void:
 	_tick_accumulator = 0.0
 	_tick_count       = 0
-	_running          = true
+	_running          = false
 
 	# Build live hero instances from RunState party
 	heroes = []
-	for hero_instance in party:
-		heroes.append(_create_combatant_from_hero(hero_instance))
+	for i in range(party.size()):
+		heroes.append(_create_combatant_from_hero(party[i], i))
 
 	# Build live enemy instances from EnemyData resources
 	enemies = []
 	for enemy_data in enemy_data_list:
 		enemies.append(_create_combatant_from_enemy(enemy_data))
 
+	print("[BattleManager] Battle initialized! %d heroes vs %d enemies" % [heroes.size(), enemies.size()])
+
+## Starts the tick timer and commences auto-battle.
+func begin_combat() -> void:
+	_running = true
 	EventBus.battle_started.emit()
-	print("[BattleManager] Battle started! %d heroes vs %d enemies" % [heroes.size(), enemies.size()])
+	print("[BattleManager] Combat started!")
 
 ## Builds a live combatant dictionary from a RunState hero instance
-func _create_combatant_from_hero(hero_instance: Dictionary) -> Dictionary:
+func _create_combatant_from_hero(hero_instance: Dictionary, index: int) -> Dictionary:
 	var data = hero_instance["data"]
 	return {
 		"id":           data.id,
+		"party_index":  index,
 		"display_name": data.display_name,
 		"is_hero":      true,
 		"data":         data,

@@ -24,16 +24,18 @@
 - **Mini-Demo 7: Singletons** — Implemented an Autoload to share data across scene changes.
 - **Phase 0 Capstone: Baby Battle** — Successfully ran a automated combat loop using Resources.
 - **Phase 1 Core: Battle System** — Built the `BattleManager` simulation and the visual `BattleScene`.
+- **Map-to-Battle Connection** — Implemented `SceneManager` to handle transitions and node routing. [WORKING]
+- **Reward System** — Created `RewardScene` for post-battle loot. [WORKING]
 
 ---
 
 ## 🔧 IN PROGRESS
 | File | Status | Notes |
 |------|--------|-------|
-| `BattleManager.gd` | [READY] | Logic foundation is complete |
-| `project.godot` | [WORKING] | Config set up |
-| `AI_RULES.md` | [WORKING] | Rules established |
-| `PROJECT_STATUS.md` | [WORKING] | This file |
+| `SceneManager.gd` | [MODIFIED - needs test] | Handles global routing |
+| `BattleScene.gd` | [MODIFIED - needs test] | Now uses real data |
+| `RewardScene.gd` | [MODIFIED - needs test] | New scene for loot |
+| `MapView.gd` | [MODIFIED - needs test] | Improved unlocking logic |
 
 ---
 
