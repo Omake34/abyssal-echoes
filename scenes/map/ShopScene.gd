@@ -24,9 +24,14 @@ func _ready() -> void:
 	_update_gold_display()
 	leave_button.pressed.connect(_on_leave_pressed)
 	reroll_button.pressed.connect(_on_reroll_pressed)
+	EventBus.merge_completed.connect(_on_merge_completed)
 	_update_reroll_button()
 	_generate_shop_items()
 	_populate_inventory()
+
+func _on_merge_completed(result_skill: Resource) -> void:
+	message_label.text = "MERGED! Created: " + result_skill.display_name
+	message_label.add_theme_color_override("font_color", Color(1, 1, 0))
 
 func _update_gold_display() -> void:
 	gold_label.text = "Gold: " + str(RunState.gold)
@@ -119,6 +124,7 @@ func _on_buy_skill(skill: Resource, panel: PanelContainer) -> void:
 		return
 	
 	RunState.add_item(skill)
+	message_label.remove_theme_color_override("font_color")
 	message_label.text = "Bought: " + skill.display_name
 	_update_gold_display()
 	_populate_inventory()

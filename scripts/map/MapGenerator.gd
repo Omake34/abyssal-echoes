@@ -78,9 +78,14 @@ func _pick_type(layer: int, node_index: int) -> String:
 	if layer in ELITE_FIXED_LAYERS:
 		return "elite" if node_index == 0 else "battle"
 
-	# Mixed layers: random elite chance per node
+	# Mixed layers: random elite chance per node, plus some event chance
 	if layer in MIXED_LAYERS:
-		return "elite" if randf() < ELITE_CHANCE_IN_MIXED else "battle"
+		var r = randf()
+		if r < ELITE_CHANCE_IN_MIXED:
+			return "elite"
+		elif r < ELITE_CHANCE_IN_MIXED + 0.2:
+			return "event"
+		return "battle"
 
 	return "battle"
 

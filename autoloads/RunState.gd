@@ -89,6 +89,7 @@ func _ready() -> void:
 
 ## Call this to start a fresh run. Resets all run-specific data.
 func start_new_run(chosen_difficulty: String = "normal") -> void:
+	delete_save()
 	party              = []
 	gold               = 100  # Starting gold
 	inventory          = []
@@ -116,6 +117,7 @@ func end_run(victory: bool) -> void:
 		meta["total_victories"] += 1
 		meta["darkworld_coins"] += _calculate_coin_reward()
 	save_meta()
+	delete_save()
 	EventBus.run_ended.emit(victory, run_stats)
 
 ## Returns the coin reward based on run performance
@@ -156,6 +158,7 @@ func add_item(item: Resource) -> bool:
 		return false
 	inventory.append(item)
 	EventBus.item_acquired.emit(item)
+	check_for_merges()
 	return true
 
 ## Removes an item from inventory.
@@ -168,6 +171,54 @@ func salvage_item(item: Resource) -> void:
 	remove_item(item)
 	gold += 5  # Placeholder: salvage gives 5 gold for now
 	EventBus.gold_changed.emit(gold)
+
+func check_for_merges() -> void:
+	var skill_counts = {}
+	
+	for i in range(inventory.size()):
+		var skill = inventory[i]
+		if not skill.can_merge or skill.merge_result_id == "": continue
+		var id = skill.id
+		if not skill_counts.has(id):
+			skill_counts[id] = []
+		skill_counts[id].append({"type": "inventory", "skill": skill})
+		
+	for h in range(party.size()):
+		var hero = party[h]
+		for s in range(hero["skills"].size()):
+			var skill = hero["skills"][s]
+			if not skill.can_merge or skill.merge_result_id == "": continue
+			var id = skill.id
+			if not skill_counts.has(id):
+				skill_counts[id] = []
+			skill_counts[id].append({"type": "hero", "hero_idx": h, "skill": skill})
+			
+	for id in skill_counts:
+		var locs = skill_counts[id]
+		if locs.size() >= 3:
+			var base_skill = locs[0]["skill"]
+			var result_id = base_skill.merge_result_id
+			
+			for i in range(3):
+				var loc = locs[i]
+				if loc["type"] == "inventory":
+					inventory.erase(loc["skill"])
+					EventBus.item_removed.emit(loc["skill"])
+				else:
+					party[loc["hero_idx"]]["skills"].erase(loc["skill"])
+					
+			var new_path = "res://resources/skills/skill_" + result_id.trim_suffix("_tier2") + "_tier2.tres"
+			if not FileAccess.file_exists(new_path):
+				new_path = "res://resources/skills/" + result_id + ".tres"
+				
+			var new_skill = load(new_path)
+			if new_skill:
+				run_stats["skills_merged"] += 1
+				EventBus.merge_completed.emit(new_skill)
+				add_item(new_skill)
+			else:
+				push_error("[RunState] Merge failed: Could not load " + new_path)
+			return
 
 # ── GOLD MANAGEMENT ───────────────────────────────────────────────────────────
 
@@ -186,18 +237,41 @@ func spend_gold(amount: int) -> bool:
 
 # ── SAVE / LOAD ───────────────────────────────────────────────────────────────
 
+## Checks if there is a saved run to continue
+func has_saved_run() -> bool:
+	return FileAccess.file_exists(SAVE_PATH)
+
+## Deletes the current run save (called when run ends or a new run starts)
+func delete_save() -> void:
+	if FileAccess.file_exists(SAVE_PATH):
+		DirAccess.remove_absolute(SAVE_PATH)
+
 ## Saves current run state to disk (call at every node transition)
 func save_run() -> void:
 	if not run_active:
 		return
+		
+	var party_data = []
+	for hero in party:
+		party_data.append({
+			"data_path": hero["data"].resource_path,
+			"current_hp": hero["current_hp"],
+			"skills": hero["skills"].map(func(s): return s.resource_path),
+			"pos_x": hero["position"].x,
+			"pos_y": hero["position"].y
+		})
+		
+	var inventory_data = inventory.map(func(i): return i.resource_path)
+		
 	var data = {
 		"gold": gold,
-		"current_map_node": current_map_node,
-		"completed_nodes": completed_nodes,
 		"difficulty": difficulty,
 		"run_stats": run_stats,
-		# Note: party and inventory are saved by ID reference only
-		"party_hero_ids": party.map(func(h): return h["data"].id),
+		"current_map": current_map,
+		"current_node_id": current_node_id,
+		"completed_node_ids": completed_node_ids,
+		"party": party_data,
+		"inventory": inventory_data
 	}
 	var json_string = JSON.stringify(data, "\t")
 	var file = FileAccess.open(SAVE_PATH, FileAccess.WRITE)
@@ -207,6 +281,60 @@ func save_run() -> void:
 	file.store_string(json_string)
 	file.close()
 	print("[RunState] Run saved.")
+
+## Loads the run state from disk
+func load_run() -> bool:
+	if not has_saved_run():
+		return false
+	var file = FileAccess.open(SAVE_PATH, FileAccess.READ)
+	if file == null:
+		return false
+	var json_string = file.get_as_text()
+	file.close()
+	
+	var data = JSON.parse_string(json_string)
+	if data == null:
+		push_error("[RunState] Save file is corrupted")
+		return false
+		
+	gold = data.get("gold", 0)
+	difficulty = data.get("difficulty", "normal")
+	run_stats = data.get("run_stats", {})
+	current_map = data.get("current_map", [])
+	current_node_id = data.get("current_node_id", "")
+	
+	var loaded_completed_ids = data.get("completed_node_ids", [])
+	completed_node_ids.clear()
+	for id in loaded_completed_ids:
+		completed_node_ids.append(id)
+	
+	party.clear()
+	var loaded_party = data.get("party", [])
+	for h_data in loaded_party:
+		var hero_res = load(h_data.get("data_path", ""))
+		if not hero_res: continue
+		var skills = []
+		for s_path in h_data.get("skills", []):
+			var s_res = load(s_path)
+			if s_res: skills.append(s_res)
+			
+		party.append({
+			"data": hero_res,
+			"current_hp": h_data.get("current_hp", hero_res.base_hp),
+			"skills": skills,
+			"position": Vector2i(h_data.get("pos_x", 0), h_data.get("pos_y", 0)),
+			"status_effects": []
+		})
+		
+	inventory.clear()
+	var loaded_inventory = data.get("inventory", [])
+	for i_path in loaded_inventory:
+		var i_res = load(i_path)
+		if i_res: inventory.append(i_res)
+		
+	run_active = true
+	print("[RunState] Run loaded.")
+	return true
 
 ## Saves meta-progression data
 func save_meta() -> void:

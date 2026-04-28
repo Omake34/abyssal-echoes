@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="SkillData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/skills/SkillData.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "arcane_blast_tier2"
+display_name = "Arcane Blast II"
+description = "Unleashes an explosion of magic dealing 80% Magic ATK to all enemies."
+tier = 2
+skill_type = "magic"
+target_type = "all_enemies"
+effect_id = "arcane_blast_tier2"
+power = 1.2000000000000002
+power_secondary = 0.0
+uses_per_battle = 0
+cooldown_ticks = 4
+can_merge = true
+merge_result_id = ""
+ex_ingredient_a = ""
+ex_ingredient_b = ""
+icon_path = ""
+vfx_id = "arcane_blast_tier2"

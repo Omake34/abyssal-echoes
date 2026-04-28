@@ -8,9 +8,9 @@
 ---
 
 ## 🎯 CURRENT TASK
-> **Phase 2 — Map & Navigation: MapNode.tscn**
-> Create interactive, clickable nodes for the branching path system.
-> File: `res://scenes/map/MapNode.tscn`
+> **Phase 2 — Map & Navigation: Save/Load Run State**
+> Implement logic to persist the RunState between sessions so the player can continue a run.
+> File: `res://autoloads/RunState.gd`
 
 ---
 
@@ -26,6 +26,7 @@
 - **Phase 1 Core: Battle System** — Built the `BattleManager` simulation and the visual `BattleScene`.
 - **Map-to-Battle Connection** — Implemented `SceneManager` to handle transitions and node routing. [WORKING]
 - **Reward System** — Created `RewardScene` for post-battle loot. [WORKING]
+- **MapNode Component** — Refactored `MapView` map node generation into a standalone reusable `MapNode.tscn`.
 
 ---
 
@@ -35,7 +36,7 @@
 | `SceneManager.gd` | [MODIFIED - needs test] | Handles global routing |
 | `BattleScene.gd` | [MODIFIED - needs test] | Now uses real data |
 | `RewardScene.gd` | [MODIFIED - needs test] | New scene for loot |
-| `MapView.gd` | [MODIFIED - needs test] | Improved unlocking logic |
+| `MapView.gd` | [MODIFIED - needs test] | Now instantiates `MapNode.tscn` |
 
 ---
 
@@ -76,13 +77,13 @@
 
 ## 🔲 PHASE 2 CHECKLIST — Vertical Slice
 *(Locked until Phase 1 complete)*
-- [ ] MapScene.tscn — 5-node linear path
-- [ ] ShopScene.tscn
-- [ ] EventScene.tscn + 5 event cards
-- [ ] Merge system (3x Tier I → Tier II)
-- [ ] Save/Load run state
-- [ ] 20 total skills
-- [ ] 1 boss encounter
+- [x] MapScene.tscn — 5-node linear path (Built as MapView procedural map)
+- [x] ShopScene.tscn
+- [x] EventScene.tscn + 5 event cards
+- [x] Merge system (3x Tier I → Tier II)
+- [x] Save/Load run state
+- [x] 20 total skills
+- [x] 1 boss encounter
 
 ---
 

@@ -10,6 +10,7 @@ extends Control
 @onready var inventory_panel: Panel = $InventoryPanel
 @onready var inventory_grid: Container = $InventoryPanel/VBoxContainer/ScrollContainer/InventoryGrid
 @onready var log_panel: Panel = $LogPanel
+@onready var skip_button: Button = $SkipButton
 
 const COMBATANT_UI = preload("res://scenes/battle/CombatantUI.tscn")
 const BATTLE_SLOT  = preload("res://scenes/battle/BattleSlot.gd")
@@ -23,6 +24,7 @@ func _ready() -> void:
 	EventBus.damage_dealt.connect(_on_damage_dealt)
 	EventBus.battle_ended.connect(_on_battle_ended)
 	start_button.pressed.connect(_on_start_battle_pressed)
+	skip_button.pressed.connect(_on_skip_pressed)
 	
 	# 3. Determine enemies based on current node
 	var enemies = _get_enemies_for_current_node()
@@ -38,7 +40,12 @@ func _on_start_battle_pressed() -> void:
 	prep_ui.visible = false
 	inventory_panel.visible = false
 	log_panel.visible = true
+	skip_button.visible = true
 	battle_manager.begin_combat()
+
+func _on_skip_pressed() -> void:
+	skip_button.disabled = true
+	battle_manager.skip_battle()
 
 func _setup_test_run() -> void:
 	# Only runs if we launched BattleScene directly without a party

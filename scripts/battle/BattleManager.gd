@@ -128,6 +128,20 @@ func _process(delta: float) -> void:
 		_tick_accumulator -= TICK_INTERVAL_SECONDS
 		_simulate_tick()
 
+## Rapidly simulates the remainder of the battle (for dev testing)
+func skip_battle() -> void:
+	if not _running: return
+	print("[BattleManager] Skipping to end of battle...")
+	# Simulate ticks as fast as possible until running stops
+	# Put a hard limit to avoid freezing the game
+	var limit = MAX_TICKS
+	while _running and limit > 0:
+		_simulate_tick()
+		limit -= 1
+		
+	if limit <= 0 and _running:
+		_end_battle("lose")
+
 ## One tick of battle simulation
 func _simulate_tick() -> void:
 	_tick_count += 1

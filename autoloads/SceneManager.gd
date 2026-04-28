@@ -8,6 +8,8 @@ const MAP_SCENE    = "res://scenes/map/MapView.tscn"
 const BATTLE_SCENE = "res://scenes/battle/BattleScene.tscn"
 const SHOP_SCENE   = "res://scenes/map/ShopScene.tscn"
 const REWARD_SCENE = "res://scenes/battle/RewardScene.tscn"
+const EVENT_SCENE  = "res://scenes/map/EventScene.tscn"
+const RUN_END_SCENE = "res://scenes/EndRunScene.tscn"
 
 # ── LIFECYCLE ─────────────────────────────────────────────────────────────────
 
@@ -16,8 +18,22 @@ func _ready() -> void:
 	EventBus.scene_change_requested.connect(_on_scene_change_requested)
 	EventBus.map_node_selected.connect(_on_map_node_selected)
 	EventBus.battle_ended.connect(_on_battle_ended)
+	EventBus.run_ended.connect(_on_run_ended)
 
 # ── SIGNAL HANDLERS ───────────────────────────────────────────────────────────
+
+func _on_run_ended(victory: bool, stats: Dictionary) -> void:
+	# Give the user a moment to process if they lost in battle
+	await get_tree().create_timer(1.0).timeout
+	
+	var scene = load(RUN_END_SCENE).instantiate()
+	get_tree().root.add_child(scene)
+	scene.setup(victory, stats)
+	
+	# Clean up old scene
+	var old_scene = get_tree().current_scene
+	get_tree().current_scene = scene
+	old_scene.queue_free()
 
 func _on_scene_change_requested(scene_path: String) -> void:
 	_transition_to(scene_path)
@@ -40,6 +56,9 @@ func _on_map_node_selected(node_id: String) -> void:
 		"shop":
 			print("[SceneManager] Entering shop...")
 			_transition_to(SHOP_SCENE)
+		"event":
+			print("[SceneManager] Entering event...")
+			_transition_to(EVENT_SCENE)
 		"rest":
 			print("[SceneManager] Resting... Party healed 30%%.")
 			RunState.heal_party(0.3)
@@ -54,13 +73,22 @@ func _on_map_node_selected(node_id: String) -> void:
 
 func _on_battle_ended(result: String) -> void:
 	if result == "win":
+		# Check if this was a boss node
+		var node_data = RunState.get_current_node_data()
+		if node_data.get("type") == "boss":
+			print("[SceneManager] Boss defeated! Victory reached.")
+			RunState.end_run(true)
+			return
+			
 		# Wait a moment for the player to see the result, then go to rewards
 		await get_tree().create_timer(2.0).timeout
 		_transition_to(REWARD_SCENE)
 	else:
 		print("[SceneManager] Player lost the battle.")
 		RunState.end_run(false)
-		_transition_to(MAP_SCENE)
+		# No need to transition to MAP_SCENE here, RunState.end_run(false) 
+		# will trigger _on_run_ended which goes to the end screen.
+
 
 # ── PRIVATE METHODS ───────────────────────────────────────────────────────────
 

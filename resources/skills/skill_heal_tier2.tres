@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="SkillData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/skills/SkillData.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "heal_tier2"
+display_name = "Heal II"
+description = "Restores HP to an ally equal to 150% of the caster's Healing Power."
+tier = 2
+skill_type = "support"
+target_type = "single_ally"
+effect_id = "heal_tier2"
+power = 2.25
+power_secondary = 0.0
+uses_per_battle = 0
+cooldown_ticks = 3
+can_merge = true
+merge_result_id = ""
+ex_ingredient_a = ""
+ex_ingredient_b = ""
+icon_path = ""
+vfx_id = "heal_tier2"
