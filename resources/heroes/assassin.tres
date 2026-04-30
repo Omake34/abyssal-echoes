@@ -1,0 +1,30 @@
+[gd_resource type="Resource" script_class="HeroData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/heroes/HeroData.gd" id="1_hero"]
+
+[resource]
+script = ExtResource("1_hero")
+id = "assassin"
+display_name = "Nightshade Assassin"
+description = "A high-speed, glass cannon that dodges attacks and strikes vital points."
+hero_class = "assassin"
+placeholder_color = Color(0.4, 0.1, 0.5, 1)
+base_hp = 80
+base_atk = 25
+base_magic_atk = 0
+base_def = 3
+base_magic_def = 3
+base_speed = 9
+base_crit_chance = 0.15
+base_crit_multiplier = 2.0
+base_evasion = 0.25
+base_heal_power = 0.0
+skill_slots = 3
+starting_skills = Array[Resource]([])
+trait_name = "Lethal Edge"
+trait_description = "Critical hits deal 20% more damage."
+trait_effect_id = "crit_bonus"
+preferred_row = "back"
+unlocked_by_default = false
+unlock_condition = "Spend 100 Darkworld Coins."
+sprite_path = ""

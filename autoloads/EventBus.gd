@@ -21,17 +21,17 @@ signal battle_ended(result: String)
 signal tick_processed()
 
 ## Emitted when any combatant dies
-signal hero_died(hero: Resource)
-signal enemy_died(enemy: Resource)
+signal hero_died(hero: Dictionary)
+signal enemy_died(enemy: Dictionary)
 
 ## Emitted when a skill is cast
-signal skill_cast(caster: Resource, skill: Resource, targets: Array)
+signal skill_cast(caster: Dictionary, skill: SkillData, targets: Array)
 
 ## Emitted when damage is dealt (for floating damage numbers)
-signal damage_dealt(target: Resource, amount: int, is_crit: bool)
+signal damage_dealt(target: Dictionary, amount: int, is_crit: bool)
 
 ## Emitted when healing is applied
-signal healing_applied(target: Resource, amount: int)
+signal healing_applied(target: Dictionary, amount: int)
 
 # ── INVENTORY / ITEM SIGNALS ──────────────────────────────────────────────────
 

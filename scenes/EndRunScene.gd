@@ -13,11 +13,11 @@ func setup(victory: bool, stats: Dictionary) -> void:
 	if victory:
 		status_label.text = "VICTORY"
 		status_label.add_theme_color_override("font_color", Color(1, 0.84, 0)) # Gold
-		background.texture = load("res://assets/ui/victory_bg.png")
+		background.texture = _load_png_texture("res://assets/ui/victory_bg.png")
 	else:
 		status_label.text = "DEFEAT"
 		status_label.add_theme_color_override("font_color", Color(0.86, 0.08, 0.24)) # Crimson
-		background.texture = load("res://assets/ui/defeat_bg.png")
+		background.texture = _load_png_texture("res://assets/ui/defeat_bg.png")
 		
 	var stats_text = "[center]"
 	stats_text += "[b]Run Statistics[/b]\n\n"
@@ -32,3 +32,12 @@ func setup(victory: bool, stats: Dictionary) -> void:
 
 func _on_return_pressed() -> void:
 	EventBus.scene_change_requested.emit("res://scenes/MainMenu.tscn")
+
+func _load_png_texture(path: String) -> Texture2D:
+	var bytes = FileAccess.get_file_as_bytes(path)
+	if bytes.is_empty():
+		return null
+	var image = Image.new()
+	if image.load_png_from_buffer(bytes) != OK:
+		return null
+	return ImageTexture.create_from_image(image)

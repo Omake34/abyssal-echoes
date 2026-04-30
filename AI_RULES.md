@@ -184,14 +184,14 @@ The AI must check this before implementing any feature:
 
 | Feature | Phase | Status |
 |---------|-------|--------|
-| Baby Battle prototype (throwaway) | Phase 0 | 🔲 Not started |
-| BattleScene (real) | Phase 1 | 🔒 Locked until Phase 0 done |
-| FormationScreen | Phase 1 | 🔒 Locked |
-| InventoryScreen | Phase 1 | 🔒 Locked |
-| MapScene | Phase 2 | 🔒 Locked |
-| ShopScene | Phase 2 | 🔒 Locked |
-| Meta-progression | Phase 3 | 🔒 Locked |
-| All 6 classes | Phase 3 | 🔒 Locked |
+| Baby Battle prototype (throwaway) | Phase 0 | ✅ Done |
+| BattleScene (real) | Phase 1 | ✅ Done |
+| FormationScreen | Phase 1 | ✅ Done |
+| InventoryScreen | Phase 1 | ✅ Done |
+| MapScene | Phase 2 | ✅ Done |
+| ShopScene | Phase 2 | ✅ Done |
+| Meta-progression | Phase 3 | ✅ Done |
+| All 6 classes | Phase 3 | ✅ Done |
 | Steam integration | Phase 4 | 🔒 Locked |
 
 **🔒 Locked = Do not implement yet. 🔲 Not started = Ready to begin. ✅ Done = Complete.**

@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="SkillData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/skills/SkillData.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "whirlwind_tier3"
+display_name = "Vortex of Souls"
+description = "A storm of blades powered by the restless spirits. Deals 2.5x ATK to ALL enemies."
+tier = 3
+skill_type = "physical"
+compatible_classes = ["warrior"]
+target_type = "all_enemies"
+effect_id = "damage_atk_mult"
+power = 2.5
+power_secondary = 0.0
+uses_per_battle = 0
+cooldown_ticks = 5
+can_merge = false
+merge_result_id = ""
+ex_ingredient_a = ""
+ex_ingredient_b = ""
+icon_path = ""
+vfx_id = "22_Element_Air"

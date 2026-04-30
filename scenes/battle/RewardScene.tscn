@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://rewardscene1"]
+[gd_scene load_steps=2 format=3]
 
 [ext_resource type="Script" path="res://scenes/battle/RewardScene.gd" id="1_script"]
 
@@ -11,16 +11,27 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_script")
 
-[node name="ColorRect" type="ColorRect" parent="."]
+[node name="BackgroundArt" type="TextureRect" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.0784314, 0.0784314, 0.0980392, 0.823529)
+expand_mode = 2
+stretch_mode = 6
+
+[node name="Overlay" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.470588)
 
 [node name="Panel" type="Panel" parent="."]
+self_modulate = Color(1, 1, 1, 0)
 custom_minimum_size = Vector2(800, 500)
 layout_mode = 1
 anchors_preset = 8
@@ -46,32 +57,39 @@ offset_right = -20.0
 offset_bottom = -20.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/separation = 30
+theme_override_constants/separation = 20
+alignment = 1
 
 [node name="Title" type="Label" parent="Panel/VBoxContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 32
+theme_override_colors/font_color = Color(1, 0.843137, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 8
+theme_override_font_sizes/font_size = 48
 text = "VICTORY"
 horizontal_alignment = 1
 
 [node name="GoldLabel" type="Label" parent="Panel/VBoxContainer"]
 layout_mode = 2
-text = "Gold Earned: 50"
+theme_override_font_sizes/font_size = 24
+text = "Gold Earned: 0"
 horizontal_alignment = 1
 
 [node name="ChooseLabel" type="Label" parent="Panel/VBoxContainer"]
 layout_mode = 2
-text = "Choose a Reward:"
+theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
+text = "Select your reward:"
 horizontal_alignment = 1
 
 [node name="SkillOptions" type="HBoxContainer" parent="Panel/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
-theme_override_constants/separation = 20
+theme_override_constants/separation = 30
 alignment = 1
 
 [node name="ContinueButton" type="Button" parent="Panel/VBoxContainer"]
-custom_minimum_size = Vector2(200, 60)
+custom_minimum_size = Vector2(250, 60)
 layout_mode = 2
 size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 20
 text = "CLAIM & CONTINUE"

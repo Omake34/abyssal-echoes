@@ -33,22 +33,53 @@ func setup(data: Dictionary) -> void:
 		
 	if data.has("skills"):
 		for skill in data["skills"]:
-			var skill_rect = ColorRect.new()
-			skill_rect.custom_minimum_size = Vector2(14, 14)
-			skill_rect.color = skill.type_color
-			skill_rect.mouse_filter = Control.MOUSE_FILTER_STOP
-			skill_rect.tooltip_text = "Left-click to unequip: " + skill.display_name
+			var skill_icon = load("res://scenes/ui/ModelView2D.tscn").instantiate()
+			skill_icon.custom_minimum_size = Vector2(24, 24)
+			skill_icon.spin_enabled = false
+			skill_icon.mouse_filter = Control.MOUSE_FILTER_STOP
+			skill_icon.tooltip_text = "Left-click to unequip: " + skill.display_name
 			
-			skill_rect.gui_input.connect(func(event: InputEvent):
+			skills_container.add_child(skill_icon)
+			if skill.vfx_id != "":
+				skill_icon.load_model(skill.vfx_id)
+				skill_icon.set_color_tint(skill.type_color)
+			
+			skill_icon.gui_input.connect(func(event: InputEvent):
 				if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 					_unequip_skill(skill)
 			)
-			skills_container.add_child(skill_rect)
+			
+	# Update Synergies
+	if has_node("%SynergyLabel"):
+		var label = get_node("%SynergyLabel")
+		if data.has("active_synergies") and not data["active_synergies"].is_empty():
+			var names = []
+			for syn in data["active_synergies"]:
+				names.append(syn["display_name"])
+			label.text = ", ".join(names)
+		else:
+			label.text = ""
 	
-	# Listen for global damage signals to update our bar
-	# Ensure we don't connect multiple times if setup() is called again
+	# Listen for global signals
 	if not EventBus.damage_dealt.is_connected(_on_damage_dealt):
 		EventBus.damage_dealt.connect(_on_damage_dealt)
+	if not EventBus.healing_applied.is_connected(_on_healing_applied):
+		EventBus.healing_applied.connect(_on_healing_applied)
+	if not EventBus.tick_processed.is_connected(_update_status_ui):
+		EventBus.tick_processed.connect(_update_status_ui)
+
+func _update_status_ui() -> void:
+	if not is_instance_valid(self): return
+	
+	if has_node("%StatusLabel"):
+		var label = get_node("%StatusLabel")
+		if combatant_data.has("status_effects") and not combatant_data["status_effects"].is_empty():
+			var texts = []
+			for effect in combatant_data["status_effects"]:
+				texts.append("%s(%d)" % [effect["type"].to_upper(), effect["duration_ticks"]])
+			label.text = " ".join(texts)
+		else:
+			label.text = ""
 
 func _unequip_skill(skill: Resource) -> void:
 	# Prevent unequipping during active combat
@@ -72,17 +103,39 @@ func _unequip_skill(skill: Resource) -> void:
 		if scene.has_method("_populate_inventory"):
 			scene._populate_inventory()
 
-func _on_damage_dealt(target: Dictionary, _amount: int, _is_crit: bool) -> void:
-	# Only update if the damage was dealt to THIS unit
+func _on_damage_dealt(target: Dictionary, amount: int, is_crit: bool) -> void:
 	if target == combatant_data:
+		# Wait for projectile to arrive (approx 0.4s)
+		await get_tree().create_timer(0.4).timeout
+		
+		# If unit was killed and removed before timer finished, abort
+		if not is_instance_valid(self): return
+		
+		_spawn_floating_text(str(amount), Color.RED if not is_crit else Color.ORANGE_RED, is_crit)
 		var tween = create_tween()
 		tween.tween_property(hp_bar, "value", target["current_hp"], 0.2)
 		
-		# Shake effect
+		# Shake & Flash
 		var original_pos = position
-		tween.parallel().tween_property(self, "position", original_pos + Vector2(5, 0), 0.05)
-		tween.tween_property(self, "position", original_pos - Vector2(5, 0), 0.05)
+		color_rect.modulate = Color(10, 10, 10)
+		tween.parallel().tween_property(color_rect, "modulate", Color.WHITE, 0.2)
+		tween.parallel().tween_property(self, "position", original_pos + Vector2(randf_range(-5, 5), randf_range(-5, 5)), 0.05)
 		tween.tween_property(self, "position", original_pos, 0.05)
+
+func _on_healing_applied(target: Dictionary, amount: int) -> void:
+	if target == combatant_data:
+		_spawn_floating_text("+" + str(amount), Color.GREEN)
+		var tween = create_tween()
+		tween.tween_property(hp_bar, "value", target["current_hp"], 0.2)
+		color_rect.modulate = Color.GREEN
+		tween.parallel().tween_property(color_rect, "modulate", Color.WHITE, 0.4)
+
+func _spawn_floating_text(value: String, color: Color, is_crit: bool = false) -> void:
+	var label = Label.new()
+	label.set_script(load("res://scripts/ui/FloatingText.gd"))
+	label.position = Vector2(0, -40)
+	add_child(label)
+	label.setup(value, color, is_crit)
 
 func mark_dead() -> void:
 	var tween = create_tween()

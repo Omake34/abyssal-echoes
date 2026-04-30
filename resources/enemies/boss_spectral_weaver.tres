@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="EnemyData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/enemies/EnemyData.gd" id="1_enemy"]
+
+[resource]
+script = ExtResource("1_enemy")
+id = "boss_spectral_weaver"
+display_name = "Spectral Weaver"
+description = "A master of void energy that manipulates the threads of reality to weaken its foes."
+is_boss = true
+placeholder_color = Color(0.1, 0.5, 0.5, 1)
+base_hp = 1000
+base_atk = 25
+base_def = 10
+base_magic_def = 40
+base_speed = 8
+targeting_strategy = "random"
+skill_ids = Array[String](["arcane_blast_tier2", "skill_abyssal_chains"])
+skill_use_chance = 0.6
+gold_drop_min = 250
+gold_drop_max = 400
+loot_table = Array[Dictionary]([])
+boss_guaranteed_drop_id = "skill_abyssal_chains"
+sprite_path = ""

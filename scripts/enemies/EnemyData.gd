@@ -8,6 +8,7 @@ extends Resource
 
 @export var id: String = ""
 @export var display_name: String = ""
+@export var enemy_type: String = "void" # void, undead, beast, humanoid
 @export_multiline var description: String = ""
 
 ## Is this a boss enemy? Bosses get special UI treatment and bigger rewards.
@@ -19,10 +20,12 @@ extends Resource
 # ── STATS ─────────────────────────────────────────────────────────────────────
 
 @export var base_hp: int = 50
-@export var base_atk: int = 8
-@export var base_def: int = 3
-@export var base_magic_def: int = 2
-@export_range(1, 10) var base_speed: int = 4
+@export var base_atk: int = 10
+@export var base_magic_atk: int = 0
+@export var base_def: int = 5
+@export var base_magic_def: int = 5
+@export_range(1, 10) var base_speed: int = 5
+@export var base_heal_power: float = 0.0
 
 # ── BEHAVIOR ──────────────────────────────────────────────────────────────────
 

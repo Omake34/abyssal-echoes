@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="SkillData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/skills/SkillData.gd" id="1_skill"]
+
+[resource]
+script = ExtResource("1_skill")
+id = "skill_soul_rend"
+display_name = "Soul Rend"
+description = "Rends the target's soul, dealing damage and applying Bleed."
+tier = 3
+skill_type = "physical"
+compatible_classes = Array[String]([])
+target_type = "single_enemy"
+effect_id = "apply_bleed"
+power = 12.0
+power_secondary = 4.0
+uses_per_battle = 0
+cooldown_ticks = 4
+can_merge = false
+merge_result_id = ""
+ex_ingredient_a = ""
+ex_ingredient_b = ""
+icon_path = ""
+vfx_id = "26_BloodRing"

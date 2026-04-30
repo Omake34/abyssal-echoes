@@ -21,6 +21,9 @@ const SAVE_PATH           = "user://run_state.json"
 ## Each hero instance: { "data": HeroData, "current_hp": int, "skills": Array, "position": Vector2i }
 var party: Array = []
 
+## Whether debug/cheat mode is active
+var debug_mode: bool = false
+
 ## Player's current gold for this run
 var gold: int = 0
 
@@ -73,10 +76,38 @@ var meta: Dictionary = {
 	"darkworld_coins": 0,        # Currency earned between runs
 	"unlocked_heroes": ["warrior", "archer"],  # Start with 2 classes
 	"unlocked_skills": [],       # EX skills unlocked after first crafting
+	"discovered_skills": [],     # IDs of all skills ever seen
+	"discovered_heroes": ["warrior", "archer"], # IDs of all heroes ever recruited
+	"discovered_enemies": [],    # IDs of all enemies ever fought
 	"talent_points_spent": {},   # Talent tree progress
 	"total_runs": 0,
 	"total_victories": 0,
 }
+
+## Adds a skill to the discovered list if not already there
+func record_skill_discovery(skill_id: String) -> void:
+	if not meta["discovered_skills"].has(skill_id):
+		meta["discovered_skills"].append(skill_id)
+		save_meta()
+
+## Adds a hero to the discovered list if not already there
+func record_hero_discovery(hero_id: String) -> void:
+	if not meta["discovered_heroes"].has(hero_id):
+		meta["discovered_heroes"].append(hero_id)
+		save_meta()
+
+## Adds an enemy to the discovered list if not already there
+func record_enemy_discovery(enemy_id: String) -> void:
+	if not meta["discovered_enemies"].has(enemy_id):
+		meta["discovered_enemies"].append(enemy_id)
+		save_meta()
+
+## Unlocks a hero and saves meta progress
+func unlock_hero(hero_id: String) -> void:
+	if not meta["unlocked_heroes"].has(hero_id):
+		meta["unlocked_heroes"].append(hero_id)
+		save_meta()
+		print("[RunState] Hero unlocked: " + hero_id)
 
 const META_SAVE_PATH = "user://meta_progress.json"
 
@@ -100,11 +131,16 @@ func start_new_run(chosen_difficulty: String = "normal") -> void:
 	completed_node_ids = []
 	difficulty         = chosen_difficulty
 	run_active         = true
+	
+	# Apply "Bounty Hunter" Talent (Starting Gold)
+	var bonus_gold = meta["talent_points_spent"].get("starting_gold", 0) * 20
+	gold += bonus_gold
+	
 	run_stats = {
 		"battles_won": 0,
 		"enemies_killed": 0,
 		"skills_merged": 0,
-		"gold_earned": 100,
+		"gold_earned": gold,
 		"turns_survived": 0,
 	}
 	print("[RunState] New run started. Difficulty: " + difficulty)
@@ -133,21 +169,34 @@ func add_hero_to_party(hero_data: Resource) -> bool:
 	if party.size() >= MAX_PARTY_SIZE:
 		push_warning("[RunState] Party is full — cannot add hero")
 		return false
+		
+	# Calculate Meta Bonuses
+	var hp_bonus = meta["talent_points_spent"].get("hp_boost", 0) * 10
+	var atk_bonus = meta["talent_points_spent"].get("atk_boost", 0) * 2
+	var speed_bonus = meta["talent_points_spent"].get("speed_boost", 0) * 1
+	
 	var hero_instance = {
 		"data": hero_data,
-		"current_hp": hero_data.base_hp,
-		"skills": [],          # Array of SkillData resources
-		"position": Vector2i(0, 0),  # Formation grid position (col, row)
+		"max_hp_override": hero_data.base_hp + hp_bonus,
+		"current_hp": hero_data.base_hp + hp_bonus,
+		"atk_override": hero_data.base_atk + atk_bonus,
+		"speed_override": hero_data.base_speed + speed_bonus,
+		"skills": hero_data.starting_skills.duplicate(), 
+		"slot_index": 0,
+		"position": Vector2i(0, 0),
 		"status_effects": [],
+		"party_index": party.size()
 	}
 	party.append(hero_instance)
+	record_hero_discovery(hero_data.hero_class)
 	return true
 
 ## Heals all heroes by a percentage of their max HP (used at Rest nodes)
 func heal_party(percent: float) -> void:
 	for hero in party:
-		var heal_amount = int(hero["data"].base_hp * percent)
-		hero["current_hp"] = min(hero["current_hp"] + heal_amount, hero["data"].base_hp)
+		var max_hp = hero.get("max_hp_override", hero["data"].base_hp)
+		var heal_amount = int(max_hp * percent)
+		hero["current_hp"] = min(hero["current_hp"] + heal_amount, max_hp)
 
 # ── INVENTORY MANAGEMENT ──────────────────────────────────────────────────────
 
@@ -157,6 +206,7 @@ func add_item(item: Resource) -> bool:
 		push_warning("[RunState] Inventory full")
 		return false
 	inventory.append(item)
+	record_skill_discovery(item.id)
 	EventBus.item_acquired.emit(item)
 	check_for_merges()
 	return true
@@ -172,9 +222,40 @@ func salvage_item(item: Resource) -> void:
 	gold += 5  # Placeholder: salvage gives 5 gold for now
 	EventBus.gold_changed.emit(gold)
 
+## Automatically equips skills from inventory to suitable heroes
+func auto_equip_skills() -> void:
+	var items_to_remove = []
+	
+	for skill in inventory:
+		var successfully_equipped = false
+		
+		# Try to find a suitable hero with an open slot
+		for hero in party:
+			var data = hero["data"]
+			var current_skills = hero["skills"]
+			
+			# Check if hero has room
+			if current_skills.size() >= data.skill_slots:
+				continue
+				
+			# Check if skill is compatible with this class
+			if skill.compatible_classes.is_empty() or data.hero_class in skill.compatible_classes:
+				current_skills.append(skill)
+				items_to_remove.append(skill)
+				successfully_equipped = true
+				break
+	
+	# Clean up inventory
+	for item in items_to_remove:
+		inventory.erase(item)
+		EventBus.item_removed.emit(item)
+	
+	save_run()
+
 func check_for_merges() -> void:
 	var skill_counts = {}
 	
+	# Only check inventory for automatic merges (conservative behavior)
 	for i in range(inventory.size()):
 		var skill = inventory[i]
 		if not skill.can_merge or skill.merge_result_id == "": continue
@@ -182,16 +263,6 @@ func check_for_merges() -> void:
 		if not skill_counts.has(id):
 			skill_counts[id] = []
 		skill_counts[id].append({"type": "inventory", "skill": skill})
-		
-	for h in range(party.size()):
-		var hero = party[h]
-		for s in range(hero["skills"].size()):
-			var skill = hero["skills"][s]
-			if not skill.can_merge or skill.merge_result_id == "": continue
-			var id = skill.id
-			if not skill_counts.has(id):
-				skill_counts[id] = []
-			skill_counts[id].append({"type": "hero", "hero_idx": h, "skill": skill})
 			
 	for id in skill_counts:
 		var locs = skill_counts[id]
@@ -201,13 +272,11 @@ func check_for_merges() -> void:
 			
 			for i in range(3):
 				var loc = locs[i]
-				if loc["type"] == "inventory":
-					inventory.erase(loc["skill"])
-					EventBus.item_removed.emit(loc["skill"])
-				else:
-					party[loc["hero_idx"]]["skills"].erase(loc["skill"])
+				inventory.erase(loc["skill"])
+				EventBus.item_removed.emit(loc["skill"])
 					
-			var new_path = "res://resources/skills/skill_" + result_id.trim_suffix("_tier2") + "_tier2.tres"
+			# Try multiple path patterns to find the result skill
+			var new_path = "res://resources/skills/skill_" + result_id + ".tres"
 			if not FileAccess.file_exists(new_path):
 				new_path = "res://resources/skills/" + result_id + ".tres"
 				
@@ -257,6 +326,10 @@ func save_run() -> void:
 			"data_path": hero["data"].resource_path,
 			"current_hp": hero["current_hp"],
 			"skills": hero["skills"].map(func(s): return s.resource_path),
+			"slot_index": hero.get("slot_index", 0),
+			"max_hp_override": hero.get("max_hp_override", hero["data"].base_hp),
+			"atk_override": hero.get("atk_override", hero["data"].base_atk),
+			"speed_override": hero.get("speed_override", hero["data"].base_speed),
 			"pos_x": hero["position"].x,
 			"pos_y": hero["position"].y
 		})
@@ -321,7 +394,11 @@ func load_run() -> bool:
 		party.append({
 			"data": hero_res,
 			"current_hp": h_data.get("current_hp", hero_res.base_hp),
+			"max_hp_override": h_data.get("max_hp_override", hero_res.base_hp),
+			"atk_override": h_data.get("atk_override", hero_res.base_atk),
+			"speed_override": h_data.get("speed_override", hero_res.base_speed),
 			"skills": skills,
+			"slot_index": h_data.get("slot_index", 0),
 			"position": Vector2i(h_data.get("pos_x", 0), h_data.get("pos_y", 0)),
 			"status_effects": []
 		})
@@ -362,4 +439,10 @@ func load_meta() -> void:
 		push_error("[RunState] Meta save file is corrupted")
 		return
 	meta.merge(parsed, true)  # Merge loaded data, overwriting defaults
-	print("[RunState] Meta progress loaded.")
+	
+	# TEST CHEAT: Grant 99,999 coins for Talent Tree testing (Debug only)
+	if debug_mode:
+		meta["darkworld_coins"] = 99999
+		print("[RunState] Meta progress loaded. (DEBUG CHEAT ACTIVE: 99,999 Coins)")
+	else:
+		print("[RunState] Meta progress loaded.")

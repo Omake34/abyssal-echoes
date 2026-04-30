@@ -1,0 +1,30 @@
+[gd_resource type="Resource" script_class="HeroData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/heroes/HeroData.gd" id="1_hero"]
+
+[resource]
+script = ExtResource("1_hero")
+id = "captain"
+display_name = "Vanguard Captain"
+description = "A balanced leader who bolsters allies and stands firm in the front line."
+hero_class = "captain"
+placeholder_color = Color(0.2, 0.5, 0.8, 1)
+base_hp = 130
+base_atk = 18
+base_magic_atk = 0
+base_def = 8
+base_magic_def = 5
+base_speed = 5
+base_crit_chance = 0.05
+base_crit_multiplier = 1.5
+base_evasion = 0.05
+base_heal_power = 0.0
+skill_slots = 3
+starting_skills = Array[Resource]([])
+trait_name = "Commander's Aura"
+trait_description = "Increases all allies' defense by 2 while alive."
+trait_effect_id = "defense_aura"
+preferred_row = "front"
+unlocked_by_default = false
+unlock_condition = "Spend 100 Darkworld Coins."
+sprite_path = ""

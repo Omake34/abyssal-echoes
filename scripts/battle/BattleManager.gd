@@ -58,6 +58,7 @@ func init_battle(party: Array, enemy_data_list: Array) -> void:
 	enemies = []
 	for enemy_data in enemy_data_list:
 		enemies.append(_create_combatant_from_enemy(enemy_data))
+		RunState.record_enemy_discovery(enemy_data.id)
 
 	print("[BattleManager] Battle initialized! %d heroes vs %d enemies" % [heroes.size(), enemies.size()])
 
@@ -70,6 +71,19 @@ func begin_combat() -> void:
 ## Builds a live combatant dictionary from a RunState hero instance
 func _create_combatant_from_hero(hero_instance: Dictionary, index: int) -> Dictionary:
 	var data = hero_instance["data"]
+	var skills = hero_instance["skills"]
+	
+	# Calculate Synergies
+	var active_syns = SynergyManager.get_active_synergies(skills)
+	var mods = SynergyManager.calculate_multipliers(active_syns)
+	
+	# Use meta-progression overrides if they exist, then apply synergy
+	var max_hp = int(hero_instance.get("max_hp_override", data.base_hp) * mods["hp_mult"])
+	var atk    = int(hero_instance.get("atk_override", data.base_atk) * mods["atk_mult"])
+	var magic_atk = int(data.base_magic_atk * mods["magic_atk_mult"])
+	var heal_power = data.base_heal_power * mods["heal_power_mult"]
+	var speed  = int(hero_instance.get("speed_override", data.base_speed) + mods["speed_add"])
+	
 	return {
 		"id":           data.id,
 		"party_index":  index,
@@ -77,23 +91,35 @@ func _create_combatant_from_hero(hero_instance: Dictionary, index: int) -> Dicti
 		"is_hero":      true,
 		"data":         data,
 		"current_hp":   hero_instance["current_hp"],
-		"max_hp":       data.base_hp,
-		"atk":          data.base_atk,
+		"max_hp":       max_hp,
+		"atk":          atk,
+		"magic_atk":    magic_atk,
+		"heal_power":   heal_power,
 		"def":          data.base_def,
-		"speed":        data.base_speed,
+		"magic_def":    data.base_magic_def,
+		"speed":        speed,
 		"crit_chance":  data.base_crit_chance,
 		"crit_mult":    data.base_crit_multiplier,
 		"evasion":      data.base_evasion,
-		"skills":       hero_instance["skills"].duplicate(),
+		"skills":       skills.duplicate(),
+		"active_synergies": active_syns,
 		"skill_cooldowns": {},  # skill_id → ticks remaining
 		"status_effects":  [],
 		"position":     hero_instance["position"],
+		"slot_index":   hero_instance.get("slot_index", index),
 		"alive":        true,
 		"tick_progress": 0,   # Accumulates each tick based on speed
 	}
 
 ## Builds a live combatant dictionary from an EnemyData resource
 func _create_combatant_from_enemy(enemy_data: EnemyData) -> Dictionary:
+	# Load skills from IDs
+	var enemy_skills = []
+	for skill_id in enemy_data.skill_ids:
+		var skill = GameData.get_skill(skill_id)
+		if skill:
+			enemy_skills.append(skill)
+
 	return {
 		"id":           enemy_data.id,
 		"display_name": enemy_data.display_name,
@@ -102,12 +128,15 @@ func _create_combatant_from_enemy(enemy_data: EnemyData) -> Dictionary:
 		"current_hp":   enemy_data.base_hp,
 		"max_hp":       enemy_data.base_hp,
 		"atk":          enemy_data.base_atk,
+		"magic_atk":    enemy_data.base_magic_atk,
+		"heal_power":   enemy_data.base_heal_power,
 		"def":          enemy_data.base_def,
+		"magic_def":    enemy_data.base_magic_def,
 		"speed":        enemy_data.base_speed,
 		"crit_chance":  0.05,
 		"crit_mult":    1.5,
 		"evasion":      0.0,
-		"skills":       [],
+		"skills":       enemy_skills,
 		"skill_cooldowns": {},
 		"status_effects":  [],
 		"alive":        true,
@@ -170,6 +199,12 @@ func _simulate_tick() -> void:
 
 ## Advances one combatant's action logic
 func _tick_combatant(combatant: Dictionary) -> void:
+	# Check for stun
+	for effect in combatant["status_effects"]:
+		if effect["type"] == "stun":
+			# Stunned: cannot accumulate progress or act
+			return
+
 	# Speed determines how often a combatant acts
 	# A combatant with speed 10 acts every tick; speed 5 acts every 2 ticks
 	combatant["tick_progress"] += combatant["speed"]
@@ -211,9 +246,9 @@ func _try_use_skill(combatant: Dictionary) -> bool:
 	var skill: SkillData = available_skills[randi() % available_skills.size()]
 	var targets = _get_targets(combatant, skill)
 
+	EventBus.skill_cast.emit(combatant, skill, targets)
 	_apply_skill(combatant, skill, targets)
 	combatant["skill_cooldowns"][skill.id] = skill.cooldown_ticks
-	EventBus.skill_cast.emit(combatant, skill, targets)
 	return true
 
 ## Determines the target array for a given skill
@@ -235,10 +270,29 @@ func _get_targets(caster: Dictionary, skill: SkillData) -> Array:
 func _pick_target(target_list: Array, caster: Dictionary, prefer_hurt: bool = false) -> Dictionary:
 	if target_list.is_empty():
 		return {}
+	
 	if prefer_hurt:
 		# For heals: target ally with lowest HP percentage
 		target_list.sort_custom(func(a, b): return float(a["current_hp"]) / a["max_hp"] < float(b["current_hp"]) / b["max_hp"])
 		return target_list[0]
+	
+	# If it's an enemy, use their defined strategy
+	if not caster["is_hero"] and "data" in caster and caster["data"] is EnemyData:
+		var strategy = caster["data"].targeting_strategy
+		match strategy:
+			"lowest_hp":
+				target_list.sort_custom(func(a, b): return a["current_hp"] < b["current_hp"])
+				return target_list[0]
+			"highest_hp":
+				target_list.sort_custom(func(a, b): return a["current_hp"] > b["current_hp"])
+				return target_list[0]
+			"front_row":
+				var front = target_list.filter(func(c): return c.get("position", Vector2i.ZERO).y == 0)
+				if not front.is_empty(): return front[randi() % front.size()]
+			"back_row":
+				var back = target_list.filter(func(c): return c.get("position", Vector2i.ZERO).y == 1)
+				if not back.is_empty(): return back[randi() % back.size()]
+	
 	# Default: random target
 	return target_list[randi() % target_list.size()]
 
@@ -253,15 +307,29 @@ func _apply_skill(caster: Dictionary, skill: SkillData, targets: Array) -> void:
 				_deal_damage(caster, target, dmg, skill.skill_type == "magic")
 			"damage_atk_mult":
 				var dmg = int(caster["atk"] * skill.power)
+				
+				# Special Logic: Execute
+				if skill.id == "skill_execute":
+					var hp_percent = float(target["current_hp"]) / target["max_hp"]
+					if hp_percent <= skill.power_secondary:
+						dmg *= 2
+						print("[Battle] EXECUTE! %s deals double damage to %s" % [caster["display_name"], target["display_name"]])
+				
 				_deal_damage(caster, target, dmg, false)
 			"damage_magic_mult":
-				var dmg = int(caster["data"].base_magic_atk * skill.power)
+				var dmg = int(caster["magic_atk"] * skill.power)
 				_deal_damage(caster, target, dmg, true)
 			"heal_flat":
 				_apply_heal(caster, target, int(skill.power))
 			"heal_power_mult":
-				var heal = int(caster["data"].base_heal_power * skill.power)
+				var heal = int(caster["heal_power"] * skill.power)
 				_apply_heal(caster, target, heal)
+			"apply_stun":
+				_apply_status_effect(target, "stun", int(skill.power), 0)
+			"apply_burn":
+				_apply_status_effect(target, "burn", int(skill.power_secondary), skill.power)
+			"apply_bleed":
+				_apply_status_effect(target, "bleed", int(skill.power_secondary), skill.power)
 			_:
 				push_warning("[BattleManager] Unknown effect_id: " + skill.effect_id)
 
@@ -330,11 +398,52 @@ func _handle_death(combatant: Dictionary) -> void:
 			combatant["data"].gold_drop_max
 		)
 		RunState.add_gold(gold)
+		# Boss Guaranteed Drop
+		if combatant["data"].is_boss and combatant["data"].boss_guaranteed_drop_id != "":
+			var drop_id = combatant["data"].boss_guaranteed_drop_id
+			var drop_res = GameData.get_skill(drop_id)
+			if drop_res:
+				RunState.add_item(drop_res)
+				print("[Battle] BOSS DROP: %s dropped %s!" % [combatant["display_name"], drop_res.display_name])
+		
 		print("[Battle] ENEMY DIED: %s (gave %d gold)" % [combatant["display_name"], gold])
 
+## Adds a status effect to a combatant
+func _apply_status_effect(target: Dictionary, type: String, duration: int, power: float) -> void:
+	# Refresh if exists
+	for effect in target["status_effects"]:
+		if effect["type"] == type:
+			effect["duration_ticks"] = max(effect["duration_ticks"], duration)
+			effect["power"] = max(effect["power"], power)
+			return
+			
+	target["status_effects"].append({
+		"type": type,
+		"duration_ticks": duration,
+		"power": power
+	})
+	print("[Battle] %s applied to %s (%d ticks)" % [type.to_upper(), target["display_name"], duration])
+
 func _process_status_effects() -> void:
-	# TODO Phase 3: implement DoT, stun, burn, freeze, etc.
-	pass
+	var all = heroes + enemies
+	for combatant in all:
+		if not combatant["alive"]: continue
+		
+		var to_remove = []
+		for effect in combatant["status_effects"]:
+			match effect["type"]:
+				"burn":
+					var dmg = int(combatant["max_hp"] * effect["power"])
+					_deal_damage(combatant, combatant, dmg, true)
+				"bleed":
+					_deal_damage(combatant, combatant, int(effect["power"]), false)
+			
+			effect["duration_ticks"] -= 1
+			if effect["duration_ticks"] <= 0:
+				to_remove.append(effect)
+				
+		for e in to_remove:
+			combatant["status_effects"].erase(e)
 
 # ── WIN / LOSE ────────────────────────────────────────────────────────────────
 

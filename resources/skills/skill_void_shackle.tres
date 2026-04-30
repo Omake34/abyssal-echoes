@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="SkillData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/skills/SkillData.gd" id="1_skill"]
+
+[resource]
+script = ExtResource("1_skill")
+id = "skill_void_shackle"
+display_name = "Void Shackle"
+description = "Chains an enemy with void energy, dealing magic damage."
+tier = 3
+skill_type = "magic"
+compatible_classes = Array[String]([])
+target_type = "single_enemy"
+effect_id = "damage_magic_mult"
+power = 2.5
+power_secondary = 0.0
+uses_per_battle = 0
+cooldown_ticks = 4
+can_merge = false
+merge_result_id = ""
+ex_ingredient_a = ""
+ex_ingredient_b = ""
+icon_path = ""
+vfx_id = "9_Hypnosis"

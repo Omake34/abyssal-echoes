@@ -26,6 +26,10 @@ extends Resource
 ## Skill type — determines color coding and some synergies
 @export_enum("physical", "magic", "support", "utility") var skill_type: String = "physical"
 
+## Which hero classes can equip this skill (e.g. ["warrior", "archer"])
+## If empty, any class can equip it.
+@export var compatible_classes: Array[String] = []
+
 ## Who this skill targets
 @export_enum("single_enemy", "all_enemies", "single_ally", "all_allies", "self") var target_type: String = "single_enemy"
 

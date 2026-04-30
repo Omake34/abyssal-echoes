@@ -5,61 +5,91 @@ extends Control
 @onready var gold_label: Label = $Panel/VBoxContainer/GoldLabel
 @onready var skill_container: HBoxContainer = $Panel/VBoxContainer/SkillOptions
 @onready var continue_button: Button = $Panel/VBoxContainer/ContinueButton
+@onready var bg_texture: TextureRect = $BackgroundArt
+
+const SKILL_CARD_SCENE = preload("res://scenes/battle/SkillCard.tscn")
 
 var selected_skill: Resource = null
+var _target_gold: int = 0
+var _display_gold: int = 0
 
 func _ready() -> void:
 	# 1. Setup Visuals
-	gold_label.text = "Gold Earned: " + str(RunState.run_stats["gold_earned"] - _get_previous_gold())
+	var bg_tex = _load_png_texture("res://assets/ui/victory_bg.png")
+	if bg_tex:
+		bg_texture.texture = bg_tex
+	
+	_target_gold = RunState.run_stats["gold_earned"] - _get_previous_gold()
+	gold_label.text = "Gold Earned: 0"
 	continue_button.disabled = true
 	continue_button.pressed.connect(_on_continue_pressed)
+	
+	# Animate background fade in
+	modulate.a = 0
+	var tween = create_tween()
+	tween.tween_property(self, "modulate:a", 1.0, 0.5)
+	tween.finished.connect(_start_gold_animation)
 	
 	# 2. Generate Skill Options
 	_generate_skill_options()
 
+func _load_png_texture(path: String) -> Texture2D:
+	var bytes = FileAccess.get_file_as_bytes(path)
+	if bytes.is_empty():
+		return null
+	var image = Image.new()
+	if image.load_png_from_buffer(bytes) != OK:
+		return null
+	return ImageTexture.create_from_image(image)
+
+func _start_gold_animation() -> void:
+	var tween = create_tween()
+	tween.tween_method(func(val): 
+		_display_gold = val
+		gold_label.text = "Gold Earned: " + str(_display_gold)
+	, 0, _target_gold, 1.0).set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_OUT)
+
 func _get_previous_gold() -> int:
-	# Simple way to show just what was earned this fight
-	# In a real game, you'd pass this data in
 	return 0 
 
 func _generate_skill_options() -> void:
-	# Pick 3 random skills
-	var skill_paths = [
-		"res://resources/skills/skill_slash.tres",
-		"res://resources/skills/skill_fireball.tres",
-		"res://resources/skills/skill_power_strike.tres",
-		"res://resources/skills/skill_rally.tres",
-		"res://resources/skills/skill_magic_bolt.tres"
-	]
-	
-	skill_paths.shuffle()
-	
-	for i in range(3):
-		var skill = load(skill_paths[i])
-		var btn = Button.new()
-		btn.text = skill.display_name + "\n" + skill.description
-		btn.custom_minimum_size = Vector2(200, 150)
-		btn.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		skill_container.add_child(btn)
+	# Clear old
+	for child in skill_container.get_children():
+		child.queue_free()
 		
-		btn.pressed.connect(func(): _on_skill_selected(skill, btn))
+	# Get all Tier 1 skills (or mixed tiers for variety)
+	var pool = GameData.get_skills_by_tier(1)
+	pool.shuffle()
+	
+	# Pick top 3
+	for i in range(min(3, pool.size())):
+		var skill = pool[i]
+		var card = SKILL_CARD_SCENE.instantiate()
+		skill_container.add_child(card)
+		card.setup(skill)
+		
+		card.pressed.connect(func(): _on_skill_selected(skill, card))
 
-func _on_skill_selected(skill: Resource, btn: Button) -> void:
+func _on_skill_selected(skill: Resource, card: SkillCard) -> void:
 	selected_skill = skill
 	continue_button.disabled = false
 	
 	# Highlight selected
 	for child in skill_container.get_children():
-		child.modulate = Color.WHITE
-	btn.modulate = Color.GREEN
+		if child is SkillCard:
+			child.bg_panel.modulate = Color.WHITE
+	card.bg_panel.modulate = Color(0.5, 1.0, 0.5) # Soft Green glow
 
 func _on_continue_pressed() -> void:
 	if selected_skill:
 		RunState.add_item(selected_skill)
 	
-	# Mark current node as completed
 	if RunState.current_node_id != "":
 		RunState.completed_node_ids.append(RunState.current_node_id)
 	
-	# Return to map
-	EventBus.scene_change_requested.emit("res://scenes/map/MapView.tscn")
+	# Transition out
+	var tween = create_tween()
+	tween.tween_property(self, "modulate:a", 0.0, 0.3)
+	tween.finished.connect(func(): 
+		EventBus.scene_change_requested.emit("res://scenes/map/MapView.tscn")
+	)

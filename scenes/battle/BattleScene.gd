@@ -23,6 +23,7 @@ func _ready() -> void:
 	# 2. Connect to signals
 	EventBus.damage_dealt.connect(_on_damage_dealt)
 	EventBus.battle_ended.connect(_on_battle_ended)
+	EventBus.skill_cast.connect(_on_skill_cast)
 	start_button.pressed.connect(_on_start_battle_pressed)
 	skip_button.pressed.connect(_on_skip_pressed)
 	
@@ -34,6 +35,37 @@ func _ready() -> void:
 	
 	# 5. Spawn preparation visuals (grids and combatants)
 	_spawn_visuals()
+	_populate_inventory()
+	
+	# 6. Add Auto-Equip Button to Prep UI
+	var auto_button = Button.new()
+	auto_button.text = "AUTO-EQUIP SKILLS"
+	auto_button.custom_minimum_size = Vector2(0, 40)
+	prep_ui.add_child(auto_button)
+	# Move it above the start button for better flow
+	prep_ui.move_child(auto_button, start_button.get_index())
+	auto_button.pressed.connect(_on_auto_equip_pressed)
+
+func _on_auto_equip_pressed() -> void:
+	RunState.auto_equip_skills()
+	# Refresh visuals
+	for slot in hero_grid.get_children():
+		for child in slot.get_children():
+			child.queue_free()
+	
+	# Re-spawn heroes (sequential loop is fine now since slot_index is saved)
+	for i in range(battle_manager.heroes.size()):
+		var hero = battle_manager.heroes[i]
+		# Find the updated hero data from RunState (the live BM copy needs syncing)
+		var rs_hero = RunState.party[hero["party_index"]]
+		hero["skills"] = rs_hero["skills"].duplicate()
+		
+		var ui = COMBATANT_UI.instantiate()
+		var s_idx = hero.get("slot_index", i)
+		var target_slot = hero_grid.get_child(s_idx)
+		target_slot.add_child(ui)
+		ui.setup(hero)
+		
 	_populate_inventory()
 
 func _on_start_battle_pressed() -> void:
@@ -52,6 +84,8 @@ func _setup_test_run() -> void:
 	if RunState.party.is_empty():
 		RunState.add_hero_to_party(load("res://resources/heroes/warrior.tres"))
 		RunState.add_hero_to_party(load("res://resources/heroes/archer.tres"))
+		RunState.add_hero_to_party(load("res://resources/heroes/mage.tres"))
+		RunState.add_hero_to_party(load("res://resources/heroes/cleric.tres"))
 		RunState.current_node_id = "node_0_0"
 		# Initialize map if empty
 		if RunState.current_map.is_empty():
@@ -65,7 +99,12 @@ func _get_enemies_for_current_node() -> Array:
 	
 	match type:
 		"boss":
-			enemy_list.append(load("res://resources/enemies/bone_king.tres"))
+			var boss_pool = [
+				"res://resources/enemies/boss_abyssal_behemoth.tres",
+				"res://resources/enemies/boss_spectral_weaver.tres",
+				"res://resources/enemies/boss_void_reaper.tres"
+			]
+			enemy_list.append(load(boss_pool.pick_random()))
 		"elite":
 			enemy_list.append(load("res://resources/enemies/skeleton.tres"))
 			enemy_list.append(load("res://resources/enemies/goblin.tres"))
@@ -98,11 +137,13 @@ func _spawn_visuals() -> void:
 		slot.is_hero_side = false
 		enemy_grid.add_child(slot)
 	
-	# 3. Add heroes to their slots (for now, sequentially)
+	# 3. Add heroes to their specific slots
 	for i in range(battle_manager.heroes.size()):
 		var hero = battle_manager.heroes[i]
 		var ui = COMBATANT_UI.instantiate()
-		var target_slot = hero_grid.get_child(i)
+		# Use saved slot_index, or fallback to i if missing (old saves)
+		var s_idx = hero.get("slot_index", i)
+		var target_slot = hero_grid.get_child(s_idx)
 		target_slot.add_child(ui)
 		ui.setup(hero)
 		
@@ -122,6 +163,36 @@ func _on_damage_dealt(target: Dictionary, amount: int, is_crit: bool) -> void:
 func _on_battle_ended(result: String) -> void:
 	log_label.append_text("\n[color=yellow][b]BATTLE OVER: %s[/b][/color]" % result.to_upper())
 
+func _on_skill_cast(caster: Dictionary, skill: SkillData, targets: Array) -> void:
+	# Find caster visual node
+	var caster_ui = _find_combatant_ui(caster)
+	if not caster_ui: return
+	
+	for target in targets:
+		var target_ui = _find_combatant_ui(target)
+		if not target_ui: continue
+		
+		# Spawn VFX
+		var vfx = Node2D.new()
+		vfx.set_script(load("res://scripts/ui/SkillVFX.gd"))
+		add_child(vfx)
+		vfx.launch_projectile(
+			caster_ui.global_position + caster_ui.size/2,
+			target_ui.global_position + target_ui.size/2,
+			skill.type_color,
+			skill.vfx_id
+		)
+
+func _find_combatant_ui(data: Dictionary) -> Control:
+	var grids = [hero_grid, enemy_grid]
+	for grid in grids:
+		for slot in grid.get_children():
+			if slot.get_child_count() > 0:
+				var ui = slot.get_child(0)
+				if ui.combatant_data == data:
+					return ui
+	return null
+
 func _populate_inventory() -> void:
 	# Clear existing children if any
 	for child in inventory_grid.get_children():
@@ -130,28 +201,5 @@ func _populate_inventory() -> void:
 	# Populate based on RunState
 	for skill in RunState.inventory:
 		var panel = INVENTORY_SLOT.new()
-		panel.skill_data = skill
-		panel.custom_minimum_size = Vector2(80, 80)
-		
-		# Simple colored background based on skill type
-		var style = StyleBoxFlat.new()
-		style.bg_color = skill.type_color
-		style.border_width_left = 2
-		style.border_width_top = 2
-		style.border_width_right = 2
-		style.border_width_bottom = 2
-		style.border_color = Color.WHITE
-		panel.add_theme_stylebox_override("panel", style)
-		
-		var label = Label.new()
-		label.text = skill.display_name
-		label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-		label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		panel.add_child(label)
-		
-		# Add a tooltip with the description
-		panel.tooltip_text = "%s\n%s\n\n(Right-click to sell for 5 Gold)" % [skill.display_name, skill.description]
-		
+		panel.setup(skill)
 		inventory_grid.add_child(panel)

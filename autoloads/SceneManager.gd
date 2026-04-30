@@ -20,6 +20,34 @@ func _ready() -> void:
 	EventBus.battle_ended.connect(_on_battle_ended)
 	EventBus.run_ended.connect(_on_run_ended)
 
+## Resumes a saved run at the correct scene
+func resume_run() -> void:
+	if not RunState.run_active:
+		push_error("[SceneManager] No active run to resume")
+		return
+		
+	if RunState.current_node_id == "":
+		_transition_to(MAP_SCENE)
+		return
+		
+	# Route based on node type
+	var node_data = _find_node_data(RunState.current_node_id)
+	if node_data.is_empty():
+		_transition_to(MAP_SCENE)
+		return
+		
+	match node_data["type"]:
+		"battle", "elite", "boss":
+			_transition_to(BATTLE_SCENE)
+		"shop":
+			_transition_to(SHOP_SCENE)
+		"event":
+			_transition_to(EVENT_SCENE)
+		"treasure":
+			_transition_to(REWARD_SCENE)
+		_:
+			_transition_to(MAP_SCENE)
+
 # ── SIGNAL HANDLERS ───────────────────────────────────────────────────────────
 
 func _on_run_ended(victory: bool, stats: Dictionary) -> void:
@@ -94,6 +122,7 @@ func _on_battle_ended(result: String) -> void:
 
 func _transition_to(path: String) -> void:
 	print("[SceneManager] Transitioning to: " + path)
+	RunState.save_run()
 	get_tree().change_scene_to_file(path)
 
 func _find_node_data(node_id: String) -> Dictionary:

@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="SkillData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/skills/SkillData.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "rally_tier3"
+display_name = "Dominator's Decree"
+description = "Restore the will to fight. Restores 120 HP to ALL allies."
+tier = 3
+skill_type = "support"
+compatible_classes = []
+target_type = "all_allies"
+effect_id = "heal_flat"
+power = 120.0
+power_secondary = 0.0
+uses_per_battle = 0
+cooldown_ticks = 4
+can_merge = false
+merge_result_id = ""
+ex_ingredient_a = ""
+ex_ingredient_b = ""
+icon_path = ""
+vfx_id = "16_Belltowers"

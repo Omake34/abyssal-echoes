@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="SkillData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/skills/SkillData.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "smite_tier3"
+display_name = "Dread Retribution"
+description = "Corrupted divine power that seeks out the weakest link in the enemy's soul. Deals 10.0x Magic ATK to a single enemy."
+tier = 3
+skill_type = "magic"
+compatible_classes = ["cleric"]
+target_type = "single_enemy"
+effect_id = "damage_magic_mult"
+power = 10.0
+power_secondary = 0.0
+uses_per_battle = 0
+cooldown_ticks = 4
+can_merge = false
+merge_result_id = ""
+ex_ingredient_a = ""
+ex_ingredient_b = ""
+icon_path = ""
+vfx_id = "15_Cult"

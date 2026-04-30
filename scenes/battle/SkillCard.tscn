@@ -1,0 +1,186 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="Script" path="res://scenes/battle/SkillCard.gd" id="1_script"]
+[ext_resource type="PackedScene" path="res://scenes/ui/ModelView2D.tscn" id="2_model_view"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bg"]
+bg_color = Color(0, 0, 0, 0)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0, 0, 0, 0)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0)
+shadow_size = 0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_back"]
+bg_color = Color(0.035, 0.035, 0.04, 0.96)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.75, 0.75, 0.75, 0.35)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="LabelSettings" id="LabelSettings_name"]
+font_size = 18
+font_color = Color(0.95, 0.95, 0.95, 1)
+outline_size = 2
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_tier"]
+font_size = 12
+font_color = Color(0.72, 0.72, 0.72, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_back_name"]
+font_size = 16
+font_color = Color(0.95, 0.95, 0.95, 1)
+outline_size = 2
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_desc"]
+font_size = 15
+font_color = Color(0.88, 0.88, 0.88, 1)
+
+[node name="SkillCard" type="Button"]
+custom_minimum_size = Vector2(200, 280)
+offset_right = 200.0
+offset_bottom = 280.0
+pivot_offset = Vector2(100, 140)
+flat = true
+script = ExtResource("1_script")
+
+[node name="BGPanel" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_bg")
+
+[node name="ModelView2D" parent="." instance=ExtResource("2_model_view")]
+custom_minimum_size = Vector2(200, 280)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+fill_ratio = 1.0
+spin_enabled = false
+
+[node name="FrontInfo" type="PanelContainer" parent="."]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = -76.0
+offset_right = -8.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+
+[node name="Margin" type="MarginContainer" parent="FrontInfo"]
+layout_mode = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 6
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 6
+
+[node name="FrontVBox" type="VBoxContainer" parent="FrontInfo/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 3
+
+[node name="NameLabel" type="Label" parent="FrontInfo/Margin/FrontVBox"]
+layout_mode = 2
+text = "Skill Name"
+label_settings = SubResource("LabelSettings_name")
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="TierLabel" type="Label" parent="FrontInfo/Margin/FrontVBox"]
+layout_mode = 2
+text = "Tier I"
+label_settings = SubResource("LabelSettings_tier")
+horizontal_alignment = 1
+
+[node name="BackPanel" type="Panel" parent="."]
+visible = false
+modulate = Color(1, 1, 1, 0)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_back")
+
+[node name="Margin" type="MarginContainer" parent="BackPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 14.0
+offset_top = 18.0
+offset_right = -14.0
+offset_bottom = -14.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 0
+theme_override_constants/margin_top = 0
+theme_override_constants/margin_right = 0
+theme_override_constants/margin_bottom = 0
+
+[node name="BackVBox" type="VBoxContainer" parent="BackPanel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="BackNameLabel" type="Label" parent="BackPanel/Margin/BackVBox"]
+layout_mode = 2
+text = "Skill Name"
+label_settings = SubResource("LabelSettings_back_name")
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="BackTierLabel" type="Label" parent="BackPanel/Margin/BackVBox"]
+layout_mode = 2
+text = "Tier I"
+label_settings = SubResource("LabelSettings_tier")
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="BackPanel/Margin/BackVBox"]
+layout_mode = 2
+mouse_filter = 2
+
+[node name="DescLabel" type="Label" parent="BackPanel/Margin/BackVBox"]
+layout_mode = 2
+size_flags_vertical = 3
+text = "Description goes here. Explaining what the skill does in detail."
+label_settings = SubResource("LabelSettings_desc")
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+
+[node name="TypeStrip" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+grow_horizontal = 2
+mouse_filter = 2
+color = Color(0.1, 0.3, 0.9, 1)
+
+[connection signal="mouse_entered" from="." to="." method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="." to="." method="_on_mouse_exited"]

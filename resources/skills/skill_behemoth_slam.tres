@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="SkillData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/skills/SkillData.gd" id="1_skill"]
+
+[resource]
+script = ExtResource("1_skill")
+id = "skill_behemoth_slam"
+display_name = "Ruinous Slam"
+description = "Slams the ground, dealing damage to all enemies."
+tier = 3
+skill_type = "physical"
+compatible_classes = Array[String]([])
+target_type = "all_enemies"
+effect_id = "damage_atk_mult"
+power = 1.5
+power_secondary = 0.0
+uses_per_battle = 0
+cooldown_ticks = 8
+can_merge = false
+merge_result_id = ""
+ex_ingredient_a = ""
+ex_ingredient_b = ""
+icon_path = ""
+vfx_id = "13_SeaMonster"

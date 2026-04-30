@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="SkillData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/skills/SkillData.gd" id="1_skill"]
+
+[resource]
+script = ExtResource("1_skill")
+id = "skill_heal_tier3"
+display_name = "Abyssal Rejuvenation"
+description = "Restores HP to an ally equal to 400% of the caster's Healing Power."
+tier = 3
+skill_type = "support"
+compatible_classes = Array[String]([])
+target_type = "single_ally"
+effect_id = "heal_power_mult"
+power = 4.0
+power_secondary = 0.0
+uses_per_battle = 0
+cooldown_ticks = 5
+can_merge = false
+merge_result_id = ""
+ex_ingredient_a = ""
+ex_ingredient_b = ""
+icon_path = ""
+vfx_id = "17_Rebirth"

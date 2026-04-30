@@ -1,0 +1,32 @@
+[gd_resource type="Resource" script_class="HeroData" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/heroes/HeroData.gd" id="1_script"]
+[ext_resource type="Resource" path="res://resources/skills/skill_arcane_blast.tres" id="2_skill"]
+[ext_resource type="Resource" path="res://resources/skills/skill_magic_bolt.tres" id="3_skill"]
+
+[resource]
+script = ExtResource("1_script")
+id = "mage"
+display_name = "Mage"
+description = "A master of arcane energy. Fragile but deals massive magic damage from the backline."
+hero_class = "mage"
+placeholder_color = Color(0.2, 0.6, 1, 1)
+base_hp = 80
+base_atk = 2
+base_magic_atk = 18
+base_def = 2
+base_magic_def = 10
+base_speed = 6
+base_crit_chance = 0.1
+base_crit_multiplier = 1.8
+base_evasion = 0.05
+base_heal_power = 0.8
+skill_slots = 3
+starting_skills = Array[Resource]([ExtResource("2_skill"), ExtResource("3_skill")])
+trait_name = "Arcane Surge"
+trait_description = "Every 3rd spell cast deals 50% more damage."
+trait_effect_id = "arcane_surge"
+preferred_row = "back"
+unlocked_by_default = true
+unlock_condition = ""
+sprite_path = ""

@@ -41,18 +41,13 @@ func _generate_shop_items() -> void:
 	for child in shop_items.get_children():
 		child.queue_free()
 	
-	# Get 3 random skills
-	var skill_paths = [
-		"res://resources/skills/skill_slash.tres",
-		"res://resources/skills/skill_fireball.tres",
-		"res://resources/skills/skill_power_strike.tres",
-		"res://resources/skills/skill_rally.tres",
-		"res://resources/skills/skill_magic_bolt.tres"
-	]
-	skill_paths.shuffle()
+	# Get all Tier 1 skills from GameData
+	var pool = GameData.get_skills_by_tier(1)
+	pool.shuffle()
 	
-	for i in range(3):
-		var skill = load(skill_paths[i])
+	# Pick top 3
+	for i in range(min(3, pool.size())):
+		var skill = pool[i]
 		if skill == null:
 			continue
 		var item_panel = _create_shop_item(skill.display_name, skill.description, SKILL_PRICE)
@@ -188,25 +183,5 @@ func _populate_inventory() -> void:
 		
 	for skill in RunState.inventory:
 		var panel = INVENTORY_SLOT.new()
-		panel.skill_data = skill
-		panel.custom_minimum_size = Vector2(80, 80)
-		
-		var style = StyleBoxFlat.new()
-		style.bg_color = skill.type_color
-		style.border_width_left = 2
-		style.border_width_top = 2
-		style.border_width_right = 2
-		style.border_width_bottom = 2
-		style.border_color = Color.WHITE
-		panel.add_theme_stylebox_override("panel", style)
-		
-		var label = Label.new()
-		label.text = skill.display_name
-		label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-		label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		panel.add_child(label)
-		
-		panel.tooltip_text = "%s\n%s\n\n(Right-click to sell for 5 Gold)" % [skill.display_name, skill.description]
+		panel.setup(skill)
 		inventory_grid.add_child(panel)

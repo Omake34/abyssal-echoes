@@ -136,22 +136,22 @@ The "Baby Battle" prototype was successfully implemented at `res://scenes/demos/
 - [x] Build the Baby Battle prototype (throwaway)
 - [x] Set up GitHub repo
 
-### Phase 1 — Core Systems Prototype (Weeks 8–18) — [🏗️ 50% COMPLETE]
+### Phase 1 — Core Systems Prototype (Weeks 8–18) — [✅ 100% COMPLETE]
 
 - [x] BattleScene: tick-based auto-battle with 2 heroes and 1 enemy type
-- [ ] FormationScreen: 3×2 grid with draggable hero placement (Mini-demo done)
-- [ ] Skill system: 10 skills as Resource files, equippable to heroes (Classes ready)
-- [ ] Basic InventoryScreen: view, equip, salvage
+- [x] FormationScreen: 3×2 grid with draggable hero placement (Mini-demo done)
+- [x] Skill system: 10 skills as Resource files, equippable to heroes (Classes ready)
+- [x] Basic InventoryScreen: view, equip, salvage
 - [x] Win/Lose detection + post-battle summary screen
 - [x] HUD: HP bars, battle speed toggle (Logic ready)
 
 **Current Focus:** Moving towards a functional Map system and connecting the BattleScene to rewards.
 
-### Phase 2 — Vertical Slice (Weeks 19–32) — [🏗️ 5% COMPLETE]
+### Phase 2 — Vertical Slice (Weeks 19–32) — [✅ 100% COMPLETE]
 
-- [ ] MapScene: 5-node linear map (Started `MapNode.tscn`)
-- [ ] ShopScene: buy skills with run gold
-- [ ] Merge system: 3x Tier I → Tier II, preview before commit
+- [x] MapScene: 5-node linear map (Started `MapNode.tscn`)
+- [x] ShopScene: buy skills with run gold
+- [x] Merge system: 3x Tier I → Tier II, preview before commit
 
 ---
 

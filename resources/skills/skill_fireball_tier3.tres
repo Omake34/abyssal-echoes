@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="SkillData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/skills/SkillData.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "fireball_tier3"
+display_name = "Hellfire Torrent"
+description = "A rift opens above the battlefield, raining down waves of demonic fire. Deals 3.5x Magic ATK to ALL enemies."
+tier = 3
+skill_type = "magic"
+compatible_classes = ["mage"]
+target_type = "all_enemies"
+effect_id = "damage_magic_mult"
+power = 3.5
+power_secondary = 0.0
+uses_per_battle = 0
+cooldown_ticks = 6
+can_merge = false
+merge_result_id = ""
+ex_ingredient_a = ""
+ex_ingredient_b = ""
+icon_path = ""
+vfx_id = "20_Element_Fire"

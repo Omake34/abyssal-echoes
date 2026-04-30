@@ -55,12 +55,22 @@ func _drop_data(_at_position: Vector2, data: Variant) -> void:
 		combatant_ui.modulate.a = 1.0
 		
 		if get_child_count() > 0:
-			var my_combatant = get_child(0)
-			remove_child(my_combatant)
-			source_slot.add_child(my_combatant)
+			var my_combatant_ui = get_child(0)
+			var my_hero = my_combatant_ui.combatant_data
+			remove_child(my_combatant_ui)
+			source_slot.add_child(my_combatant_ui)
+			# Update swapped hero's slot
+			my_hero["slot_index"] = source_slot.slot_index
+			if my_hero.has("party_index"):
+				RunState.party[my_hero["party_index"]]["slot_index"] = source_slot.slot_index
 		
 		source_slot.remove_child(combatant_ui)
 		add_child(combatant_ui)
+		# Update dragged hero's slot
+		var hero = combatant_ui.combatant_data
+		hero["slot_index"] = self.slot_index
+		if hero.has("party_index"):
+			RunState.party[hero["party_index"]]["slot_index"] = self.slot_index
 		
 	elif data.has("type") and data["type"] == "skill":
 		# Skill Equip Logic

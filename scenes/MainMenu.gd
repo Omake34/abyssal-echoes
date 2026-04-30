@@ -1,12 +1,26 @@
 extends Control
 
-@onready var continue_button: Button = $CenterContainer/VBoxContainer/ContinueButton
-@onready var new_run_button: Button = $CenterContainer/VBoxContainer/NewRunButton
-@onready var quit_button: Button = $CenterContainer/VBoxContainer/QuitButton
+@onready var background: TextureRect = $Background
+@onready var continue_button: Button = $MainLayout/LeftSection/ContinueButton
+@onready var new_run_button: Button = $MainLayout/LeftSection/NewRunButton
+@onready var talent_button: Button = $MainLayout/LeftSection/TalentButton
+@onready var codex_button: Button = $MainLayout/LeftSection/CodexButton
+@onready var quit_button: Button = $MainLayout/LeftSection/QuitButton
 
 func _ready() -> void:
+	# Manually load background to avoid .tscn dependency errors
+	var bg_tex = _load_png_texture("res://assets/ui/main_menu_bg.png")
+	if bg_tex:
+		background.texture = bg_tex
+	else:
+		# Fallback: dark blue background if image is still re-importing
+		background.self_modulate = Color(0.1, 0.1, 0.15)
+		print("[MainMenu] Background image still re-importing, using fallback color.")		
+	
 	continue_button.pressed.connect(_on_continue_pressed)
 	new_run_button.pressed.connect(_on_new_run_pressed)
+	talent_button.pressed.connect(_on_talent_pressed)
+	codex_button.pressed.connect(_on_codex_pressed)
 	quit_button.pressed.connect(_on_quit_pressed)
 	
 	# Only show continue if a save exists
@@ -19,24 +33,32 @@ func _ready() -> void:
 	else:
 		new_run_button.grab_focus()
 
+func _load_png_texture(path: String) -> Texture2D:
+	var bytes = FileAccess.get_file_as_bytes(path)
+	if bytes.is_empty():
+		return null
+	var image = Image.new()
+	if image.load_png_from_buffer(bytes) != OK:
+		return null
+	return ImageTexture.create_from_image(image)
+
 func _on_continue_pressed() -> void:
 	if RunState.load_run():
-		EventBus.scene_change_requested.emit("res://scenes/map/MapView.tscn")
+		SceneManager.resume_run()
 	else:
 		# Fallback if load fails
 		continue_button.visible = false
 		new_run_button.grab_focus()
 
 func _on_new_run_pressed() -> void:
-	# If a save exists, maybe warn the player? 
-	# For now, just start a new one (RunState.start_new_run handles deleting old save)
 	RunState.start_new_run()
-	
-	# Initial setup for a fresh run
-	RunState.add_hero_to_party(load("res://resources/heroes/warrior.tres"))
-	RunState.add_hero_to_party(load("res://resources/heroes/archer.tres"))
-	
-	EventBus.scene_change_requested.emit("res://scenes/map/MapView.tscn")
+	EventBus.scene_change_requested.emit("res://scenes/HeroSelectScene.tscn")
+
+func _on_talent_pressed() -> void:
+	get_tree().change_scene_to_file("res://scenes/meta/TalentTree.tscn")
+
+func _on_codex_pressed() -> void:
+	get_tree().change_scene_to_file("res://scenes/meta/CodexScene.tscn")
 
 func _on_quit_pressed() -> void:
 	get_tree().quit()

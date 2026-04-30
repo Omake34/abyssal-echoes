@@ -14,21 +14,11 @@ const MAP_NODE_SCENE = preload("res://scenes/map/MapNode.tscn")
 
 func _ready() -> void:
 	# 0. Start a new run if needed (first time loading the map)
-	if not RunState.run_active:
-		if RunState.has_saved_run():
-			RunState.load_run()
-		else:
-			RunState.start_new_run()
-			RunState.add_hero_to_party(load("res://resources/heroes/warrior.tres"))
-			RunState.add_hero_to_party(load("res://resources/heroes/archer.tres"))
-	else:
-		# If we returned to the map while a run is active, save progress
-		RunState.save_run()
-	
 	# 1. Ensure we have map data
 	if RunState.current_map.is_empty():
 		var generator = MapGenerator.new()
 		RunState.current_map = generator.generate_map()
+		RunState.save_run() # Save immediately after generation
 	
 	# 2. Render the map
 	_render_map()

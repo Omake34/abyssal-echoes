@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="EnemyData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/enemies/EnemyData.gd" id="1_enemy"]
+
+[resource]
+script = ExtResource("1_enemy")
+id = "boss_void_reaper"
+display_name = "Void Reaper"
+description = "A terrifying entity that harvests the souls of the weak. Its strikes are lethal to those near death."
+is_boss = true
+placeholder_color = Color(0.2, 0, 0.3, 1)
+base_hp = 1200
+base_atk = 45
+base_def = 15
+base_magic_def = 15
+base_speed = 6
+targeting_strategy = "lowest_hp"
+skill_ids = Array[String](["skill_soul_rend", "skill_execute"])
+skill_use_chance = 0.4
+gold_drop_min = 200
+gold_drop_max = 350
+loot_table = Array[Dictionary]([])
+boss_guaranteed_drop_id = "skill_execute"
+sprite_path = ""
