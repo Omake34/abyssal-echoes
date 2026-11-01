@@ -2,15 +2,35 @@
 ## Abyssal Echoes: Void Weaver — Live Development Tracker
 
 **Last Updated:** November 1, 2026
-**Current Phase:** Phase 3 — Meta-Progression (Battle UX & Flow Polish)
-**Overall Progress:** [##########] 100%
+**Current Phase:** Playable prototype — combat and build-depth reassessment
+**Overall Progress:** Feature scaffolding exists; tactical gameplay acceptance criteria remain open
 
 ---
 
 ## CURRENT TASK
-> **Skill Artwork Replacement**
-> All 35 skills now have individual generated illustrations, including every upgrade tier and boss ability. Artwork is connected to reward cards, inventory and drag previews, equipment, shop purchases, Codex lists/details, and cast indicators.
-> Primary files: `res://assets/skills/`, `res://scenes/ui/SkillIcon.gd`, `res://scenes/battle/SkillCard.gd`
+> **Reference Game Analysis — installed data and gameplay recording reviewed**
+> Inspected the supplied Time Walker: Dark World 1.0.0.16 Unity build, resolved its configured data tables, inspected official screenshots, and audited the corresponding Godot systems.
+> Findings and the proposed build sequence: `docs/reference-analysis/TIME_WALKER_REVERSE_ENGINEERING.md`.
+> Sampled YouTube evidence and refined implementation decisions: `docs/reference-analysis/YOUTUBE_GAMEPLAY_NOTES.md`.
+> Recommended next system: authoritative combat placement and a shared arena prototype. Implementation has not started.
+
+---
+
+## REFERENCE ANALYSIS UPDATE — November 1, 2026
+
+- Confirmed reference version 1.0.0.16, Unity 2021.3.1f1c1, and IL2CPP metadata version 29. Recorded input-file hashes and derived facts in `docs/reference-analysis/reference_facts.json`.
+- Resolved the ConfigManager table pointers rather than counting older translation copies. The configured tables include 366 skill-behaviour records, 329 item records, 152 recipe records, 158 buff records, and 77 talent records. Counts include internal/hidden entries and do not represent selectable content totals.
+- Identified movement/range/pathfinding components, combat-event counters, passive/triggered skills, explicit synthesis/recast workflows, class progression, and compact arena HUD patterns.
+- Audited current gaps: placement and targeting use different coordinates; basic attacks ignore movement/range; declared hero traits have no battle consumers; baseline Cleric Heal restores only 2 HP; auto-equip eligibility differs from manual equipment; EX code has no tier IV resource content; MergeSystem is not invoked by gameplay.
+- Saved a proposed sequential Godot rebuild with exit criteria. The existing menu/map/reward/save flow and new artwork can be retained while the arena and build behaviour are developed.
+- Reviewed the user-supplied gameplay recording using selected frames and transcript sections. Saved timestamped notes, separated recording observations from installed-build evidence, and refined the crafting plan and transaction requirements.
+- Corrected the previous 100% overall-progress claim. Passing artwork/reward checks do not establish tactical depth or overall gameplay completeness.
+
+**Files added:** analysis report and derived facts under `docs/reference-analysis/`. **Gameplay scripts changed:** none in this analysis session.
+
+**Verification limits:** Reference game launched, but live window capture continued to time out on retries. The supplied YouTube recording was usable for selected visual checks; it was not watched uninterrupted and its exact build is unverified. Runtime timing, exact native damage formulas, and the installed build's full visible unlock set still need direct gameplay verification. Seven official screenshots were also inspected as presentation evidence.
+
+**Suggested commit message:** `Document reference game systems and combat rebuild priorities`
 
 ---
 

@@ -1,0 +1,74 @@
+{
+  "analysis_date": "2026-11-01",
+  "reference_version": "1.0.0.16 (also found in globalgamemanagers)",
+  "reference_engine": "Unity 2021.3.1f1c1, IL2CPP metadata version 29",
+  "method": "Read-only serialized data and metadata analysis, configured table pointer resolution, official screenshot inspection, and Godot source audit. Live UI capture unavailable.",
+  "bound_tables": {
+    "characters_player": {
+      "asset_path_id": 1570,
+      "rows": 28
+    },
+    "skills": {
+      "asset_path_id": 1616,
+      "rows": 366
+    },
+    "props": {
+      "asset_path_id": 1576,
+      "rows": 329
+    },
+    "synthesis": {
+      "asset_path_id": 1607,
+      "rows": 152
+    },
+    "buffs": {
+      "asset_path_id": 1603,
+      "rows": 158
+    },
+    "fetters": {
+      "asset_path_id": 1575,
+      "rows": 79
+    },
+    "new_talent_details": {
+      "asset_path_id": 1617,
+      "rows": 77
+    },
+    "battle_difficuly_atlas": {
+      "asset_path_id": 1591,
+      "rows": 8
+    },
+    "newshop": {
+      "asset_path_id": 1604,
+      "rows": 7
+    }
+  },
+  "binding_evidence": {
+    "scene": "level0",
+    "component_path_id": 236,
+    "script": "ConfigManager",
+    "table_asset": "sharedassets0.assets"
+  },
+  "count_caveat": "These are configured data record counts, including internal/hidden/unused entries. They are not counts of unlockable or player-visible content.",
+  "recipe_input_counts": {
+    "3": 108,
+    "2": 43,
+    "0": 1
+  },
+  "reference_skill_level_record_counts": {
+    "-1": 150,
+    "1": 59,
+    "2": 58,
+    "3": 58,
+    "4": 41
+  },
+  "current_skill_tier_counts": {
+    "3": 15,
+    "1": 10,
+    "2": 10
+  },
+  "current_missing_merge_result_ids": [],
+  "reference_hashes": {
+    "GameAssembly.dll": "7a22ef79a6a74d8775412b4f2aac08f4727f1a045428b2019af34b786d6bd006",
+    "Timeline Walker Dark World_Data/il2cpp_data/Metadata/global-metadata.dat": "84ba1e5b6f20af4b368d54b945ec58b8f61c92acabc375181e9c3147eb265f79",
+    "Timeline Walker Dark World_Data/sharedassets0.assets": "6ab1272588d862969a73827a2fa3f02eec1ee31cdea998634184ae6241c4ebf7"
+  }
+}
