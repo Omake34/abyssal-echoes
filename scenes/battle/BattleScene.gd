@@ -413,7 +413,7 @@ func _on_skill_cast(caster: Dictionary, skill: SkillData, targets: Array) -> voi
 			caster_ui.global_position + caster_ui.size/2,
 			target_ui.global_position + target_ui.size/2,
 			skill.type_color,
-			skill.vfx_id
+			skill.get_icon_texture()
 		)
 
 func _find_combatant_ui(data: Dictionary) -> Control:

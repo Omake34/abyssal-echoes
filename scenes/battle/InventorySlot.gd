@@ -1,7 +1,6 @@
+# PURPOSE: Show a draggable illustrated skill card in the inventory.
 class_name InventorySlot
 extends PanelContainer
-
-const MODEL_VIEW_SCENE = preload("res://scenes/ui/ModelView2D.tscn")
 
 var skill_data: SkillData
 
@@ -23,34 +22,28 @@ func setup(data: SkillData) -> void:
 func _add_card_contents(parent: Control, skill: SkillData) -> void:
 	var root = Control.new()
 	root.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	root.set_anchors_preset(Control.PRESET_FULL_RECT)
 	parent.add_child(root)
+	root.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	
-	var model_view = MODEL_VIEW_SCENE.instantiate()
-	model_view.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	model_view.fill_ratio = 1.0
-	model_view.spin_enabled = false
-	model_view.set_anchors_preset(Control.PRESET_FULL_RECT)
-	root.add_child(model_view)
-	
-	if skill.vfx_id != "":
-		model_view.load_model(skill.vfx_id)
-		model_view.set_color_tint(skill.type_color)
+	var skill_icon = SkillIcon.new()
+	root.add_child(skill_icon)
+	skill_icon.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	skill_icon.offset_bottom = -26.0
+	skill_icon.setup(skill)
 	
 	var type_strip = ColorRect.new()
 	type_strip.color = skill.type_color
 	type_strip.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	type_strip.set_anchors_preset(Control.PRESET_TOP_WIDE)
-	type_strip.size.y = 3.0
 	root.add_child(type_strip)
+	type_strip.set_anchors_and_offsets_preset(Control.PRESET_TOP_WIDE)
+	type_strip.offset_bottom = 3.0
 	
 	var title_scrim = ColorRect.new()
 	title_scrim.color = Color(0, 0, 0, 0.48)
 	title_scrim.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	title_scrim.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
-	title_scrim.position.y = -30.0
-	title_scrim.size.y = 30.0
 	root.add_child(title_scrim)
+	title_scrim.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_WIDE)
+	title_scrim.offset_top = -30.0
 	
 	var label = Label.new()
 	label.text = skill.display_name
@@ -59,10 +52,9 @@ func _add_card_contents(parent: Control, skill: SkillData) -> void:
 	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	label.add_theme_font_size_override("font_size", 11)
 	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	label.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
-	label.position.y = -30.0
-	label.size.y = 30.0
 	root.add_child(label)
+	label.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_WIDE)
+	label.offset_top = -30.0
 
 func _get_drag_data(_at_position: Vector2) -> Variant:
 	if not skill_data:

@@ -1,8 +1,7 @@
+# PURPOSE: Browse discovered game data and inspect the shared skill illustrations.
 extends Control
 
 enum Tab { SKILLS, HEROES, ENEMIES }
-
-const MODEL_VIEW_SCENE = preload("res://scenes/ui/ModelView2D.tscn")
 
 @onready var grid: GridContainer = %GridContainer
 @onready var item_icon: TextureRect = %ItemIcon
@@ -25,11 +24,8 @@ var current_tier_filter: int = 0 # 0 = All, 1 = T1, 2 = T2, 3 = T3
 var all_skills: Array = []
 var all_heroes: Array = []
 var all_enemies: Array = []
-var item_model_view = null
 
 func _ready() -> void:
-	_setup_model_preview()
-	
 	skills_tab.pressed.connect(_on_tab_pressed.bind(Tab.SKILLS))
 	heroes_tab.pressed.connect(_on_tab_pressed.bind(Tab.HEROES))
 	enemies_tab.pressed.connect(_on_tab_pressed.bind(Tab.ENEMIES))
@@ -42,17 +38,6 @@ func _ready() -> void:
 	
 	_load_all_resources()
 	_refresh_display()
-
-func _setup_model_preview() -> void:
-	item_model_view = MODEL_VIEW_SCENE.instantiate()
-	item_model_view.custom_minimum_size = Vector2(256, 320)
-	item_model_view.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-	item_model_view.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	item_model_view.visible = false
-	
-	var visual_parent = item_icon.get_parent()
-	visual_parent.add_child(item_model_view)
-	visual_parent.move_child(item_model_view, item_icon.get_index())
 
 func _load_all_resources() -> void:
 	all_skills = _load_dir("res://resources/skills")
@@ -125,6 +110,12 @@ func _create_item_node(item: Resource, is_discovered: bool) -> void:
 	
 	if is_discovered:
 		btn.text = _get_button_label(item)
+		if item is SkillData:
+			btn.icon = item.get_icon_texture()
+			btn.expand_icon = true
+			btn.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
+			btn.vertical_icon_alignment = VERTICAL_ALIGNMENT_TOP
+			btn.add_theme_constant_override("icon_max_width", 48)
 		btn.tooltip_text = item.display_name
 		btn.pressed.connect(_show_item_details.bind(item))
 	else:
@@ -157,12 +148,10 @@ func _show_item_details(item: Resource) -> void:
 func _show_detail_visual(item: Resource) -> void:
 	item_icon.visible = false
 	item_icon.texture = null
-	item_model_view.visible = false
 	
-	if item is SkillData and item.vfx_id != "":
-		item_model_view.visible = true
-		item_model_view.load_model(item.vfx_id)
-		item_model_view.set_color_tint(item.type_color)
+	if item is SkillData:
+		item_icon.texture = item.get_icon_texture()
+		item_icon.visible = item_icon.texture != null
 		return
 	
 	var texture_path = ""

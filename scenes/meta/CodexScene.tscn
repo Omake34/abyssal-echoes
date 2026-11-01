@@ -141,7 +141,7 @@ theme_override_constants/separation = 15
 
 [node name="ItemIcon" type="TextureRect" parent="MainLayout/ContentArea/DetailPanel/Margin/VBox"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(128, 128)
+custom_minimum_size = Vector2(256, 256)
 layout_mode = 2
 size_flags_horizontal = 4
 expand_mode = 1

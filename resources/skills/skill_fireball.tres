@@ -18,5 +18,5 @@ can_merge = true
 merge_result_id = "fireball_tier2"
 ex_ingredient_a = ""
 ex_ingredient_b = ""
-icon_path = ""
+icon_path = "res://assets/skills/fireball.png"
 vfx_id = "1_Fireball"

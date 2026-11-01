@@ -4,7 +4,7 @@
 
 Run this only in a temporary project copy so it cannot affect player saves:
 
-1. Copy `project.godot`, `autoloads`, `scripts`, `resources`, `scenes`, `assets`, and `tests` into a new temporary directory.
+1. Copy `project.godot`, `autoloads`, `scripts`, `resources`, `scenes`, `assets`, and `tests` into a new temporary directory. Exclude `.godot/` and generated `*.import` files so Godot creates fresh import metadata.
 2. In the copied `project.godot`, set these properties under `[application]`:
 
    ```ini
@@ -17,3 +17,11 @@ Run this only in a temporary project copy so it cannot affect player saves:
 4. Run `godot --headless --path "TEMP_PROJECT"`.
 
 Success prints `REWARD FLOW: 46 checks, 0 failures` and exits 0. An inventory-full warning is expected. The test scene refuses to execute unless both custom user directory settings identify an isolated test run.
+
+# Skill artwork checks and review
+
+After importing the isolated copy, run `godot --headless --path "TEMP_PROJECT" res://tests/skill_art_smoke_test.tscn`. Success prints `SKILL ART: 252 checks, 0 failures`. This verifies all 35 unique textures at 512 × 512, card labels and images, inventory, equipped skills, shop art, Codex art, and cast-effect cleanup.
+
+For an interactive gallery, run `res://tests/skill_art_review.tscn` in Godot. Hover the cards for descriptions and scroll through every skill. The Back button opens the main menu.
+
+To export previews with the regular renderer, pass `-- --capture-sheet="ABSOLUTE_OUTPUT.png"` for all 35 labelled icons or `-- --capture-cards="ABSOLUTE_OUTPUT.png"` for the card gallery. The review scene exits after writing the requested PNG.

@@ -18,5 +18,5 @@ can_merge = true
 merge_result_id = "magic_bolt_tier2"
 ex_ingredient_a = ""
 ex_ingredient_b = ""
-icon_path = ""
+icon_path = "res://assets/skills/magic_bolt.png"
 vfx_id = "27_Book"

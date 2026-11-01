@@ -8,9 +8,28 @@
 ---
 
 ## CURRENT TASK
-> **Battle UX & Reward Flow Polish**
-> Recent uncommitted work expands the battle grid, adds auto-formation and party-buff UI, and improves reward/navigation flow. Next: playtest, fix edge cases, and commit.
-> Primary files: `res://scenes/battle/BattleScene.gd`, `res://scenes/battle/RewardScene.gd`, `res://autoloads/RunState.gd`
+> **Skill Artwork Replacement**
+> All 35 skills now have individual generated illustrations, including every upgrade tier and boss ability. Artwork is connected to reward cards, inventory and drag previews, equipment, shop purchases, Codex lists/details, and cast indicators.
+> Primary files: `res://assets/skills/`, `res://scenes/ui/SkillIcon.gd`, `res://scenes/battle/SkillCard.gd`
+
+---
+
+## SKILL ARTWORK UPDATE — November 1, 2026
+
+- Created 35 separate dark fantasy illustrations with the built-in ImageGen tool. Each image depicts the skill's action, with stronger visual effects for upgraded tiers. Runtime images are 512 × 512 PNGs (about 16 MB total); full-size original outputs remain in the ImageGen library.
+- Assigned every skill resource an `icon_path`. `SkillData.get_icon_texture()` and the shared `SkillIcon` control keep images consistent across the UI.
+- Replaced the reused 3D skill models with artwork in cards, inventory, equipped skill slots, the shop, Codex, and cast indicators. The old model assets remain available for other uses.
+- Restored visible skill names and tier labels on reward cards. Hover descriptions, drag/drop, equipment tooltips, card selection, and reward claiming remain functional.
+- Added an interactive Godot gallery at `res://tests/skill_art_review.tscn`, plus rendered previews in `art/`.
+- Saved the complete prompt set and skill/image mapping in `assets/skills/art_manifest.json`.
+
+**Changed files [MODIFIED - needs test]:** all 35 `resources/skills/*.tres` files; `SkillData.gd`; `SkillCard.gd` and `.tscn`; `InventorySlot.gd`; `CombatantUI.gd`; `BattleScene.gd`; `ShopScene.gd`; `CodexScene.gd` and `.tscn`; `SkillVFX.gd`. Automated checks and rendered gallery review pass; a full manual run remains pending.
+
+**Added:** `assets/skills/` illustrations and manifest, `scenes/ui/SkillIcon.gd`, skill artwork smoke test and review scenes under `tests/`, `tools/PrepareSkillArt.gd`, and preview images under `art/`.
+
+**Validation:** Godot 4.7.2 import succeeds. `SKILL ART: 252 checks, 0 failures` covers every texture, distinct paths, card names/art, inventory, equipment, shop, Codex, and cast-effect cleanup. The reward-flow regression suite still reports `46 checks, 0 failures`. Rendered cards and the labelled contact sheet have been visually inspected.
+
+**Suggested commit message:** `Replace all skill visuals with individual dark fantasy illustrations`
 
 ---
 

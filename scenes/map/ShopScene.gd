@@ -50,7 +50,7 @@ func _generate_shop_items() -> void:
 		var skill = pool[i]
 		if skill == null:
 			continue
-		var item_panel = _create_shop_item(skill.display_name, skill.description, SKILL_PRICE)
+		var item_panel = _create_shop_item(skill.display_name, skill.description, SKILL_PRICE, skill)
 		shop_items.add_child(item_panel)
 		
 		# Connect buy button — stored as metadata, not via get_node
@@ -63,7 +63,7 @@ func _generate_shop_items() -> void:
 	var heal_btn: Button = heal_panel.get_meta("buy_button")
 	heal_btn.pressed.connect(_on_buy_heal.bind(heal_panel))
 
-func _create_shop_item(title: String, desc: String, price: int) -> PanelContainer:
+func _create_shop_item(title: String, desc: String, price: int, skill: SkillData = null) -> PanelContainer:
 	var panel = PanelContainer.new()
 	panel.custom_minimum_size = Vector2(200, 200)
 	
@@ -83,6 +83,12 @@ func _create_shop_item(title: String, desc: String, price: int) -> PanelContaine
 	var vbox = VBoxContainer.new()
 	vbox.add_theme_constant_override("separation", 10)
 	panel.add_child(vbox)
+	# PURPOSE: Show the same skill illustration before purchase as on reward cards.
+	if skill != null:
+		var icon = SkillIcon.new()
+		icon.custom_minimum_size = Vector2(0, 112)
+		vbox.add_child(icon)
+		icon.setup(skill)
 	
 	# Title
 	var title_label = Label.new()

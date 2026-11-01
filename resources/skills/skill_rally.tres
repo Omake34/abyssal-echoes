@@ -20,5 +20,5 @@ can_merge = true
 merge_result_id = "rally_tier2"
 ex_ingredient_a = ""
 ex_ingredient_b = ""
-icon_path = ""
+icon_path = "res://assets/skills/rally.png"
 vfx_id = "16_Belltowers"

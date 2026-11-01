@@ -20,5 +20,5 @@ can_merge = true
 merge_result_id = "whirlwind_tier2"
 ex_ingredient_a = ""
 ex_ingredient_b = ""
-icon_path = ""
+icon_path = "res://assets/skills/whirlwind.png"
 vfx_id = "22_Element_Air"

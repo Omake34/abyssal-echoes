@@ -1,0 +1,292 @@
+{
+  "generator": "Built-in ImageGen tool",
+  "date": "2026-11-01",
+  "style": "Painted dark fantasy ability illustrations",
+  "runtime_resolution": [
+    512,
+    512
+  ],
+  "common_prompt": "Use case: stylized-concept. Asset type: production square ability icon for the dark fantasy roguelite Abyssal Echoes: Void Weaver. Create ONE finished square illustration, no sheet, no typography. Cohesive premium hand-painted fantasy game icon style: bold iconic silhouette, controlled painterly brushwork, crisp readable focal object, bevelled steel and luminous magical effects, dramatic rim lighting, subtle textured near-black midnight-navy vignette background. Focal subject occupies 75% of canvas with generous 10% safe margin. Clear at 32 pixels yet beautiful at 256 pixels. No words, letters, numbers, logo, watermark, UI, card frame, border, photorealism, cartoon face, excessive detail or scenery. ",
+  "assets": [
+    {
+      "key": "slash",
+      "name": "Slash",
+      "image": "res://assets/skills/slash.png",
+      "resource": "res://resources/skills/skill_slash.tres",
+      "subject": "A single sharp silver longsword sweeping diagonally upward, one broad curved crimson-red slash trail, sparks from the cutting edge. Basic physical strike, elegant uncluttered composition.",
+      "source_filename": "exec-1231e404-a4da-47bd-9470-d555174c8cf4.png"
+    },
+    {
+      "key": "slash_tier2",
+      "name": "Slash II",
+      "image": "res://assets/skills/slash_tier2.png",
+      "resource": "res://resources/skills/skill_slash_tier2.tres",
+      "subject": "Two bright interlocking crimson crescent slash trails around a sharp silver longsword, stronger red energy and a few golden impact sparks. Advanced physical slash.",
+      "source_filename": "exec-ed9e065c-b737-489f-a2f1-7a9f94812025.png"
+    },
+    {
+      "key": "slash_tier3",
+      "name": "Rift Sunder",
+      "image": "res://assets/skills/slash_tier3.png",
+      "resource": "res://resources/skills/skill_slash_tier3.tres",
+      "subject": "An obsidian-and-silver longsword cutting a jagged glowing scar through reality, brilliant white cutting edge, crimson arc and violet rift splitting behind it. Legendary master sword attack.",
+      "source_filename": "exec-db664d96-15e4-4bf7-b16d-47304bf618b3.png"
+    },
+    {
+      "key": "power_strike",
+      "name": "Power Strike",
+      "image": "res://assets/skills/power_strike.png",
+      "resource": "res://resources/skills/skill_power_strike.tres",
+      "subject": "A heavy steel warhammer head crashing downward onto a small fractured stone surface, compact amber impact burst and a few stone shards. Powerful single blow, massive readable hammer silhouette.",
+      "source_filename": "exec-3ee5f08d-3b91-4d3f-8ad5-1be947f38c65.png"
+    },
+    {
+      "key": "power_strike_tier2",
+      "name": "Power Strike II",
+      "image": "res://assets/skills/power_strike_tier2.png",
+      "resource": "res://resources/skills/skill_power_strike_tier2.tres",
+      "subject": "A heavy angular steel warhammer striking with two concentric amber shockwave arcs, bright golden cracks spreading through black stone, several large stone fragments. Advanced crushing blow.",
+      "source_filename": "exec-7314c989-ca72-44c7-8559-39203b22dc43.png"
+    },
+    {
+      "key": "power_strike_tier3",
+      "name": "World Crusher",
+      "image": "res://assets/skills/power_strike_tier3.png",
+      "resource": "res://resources/skills/skill_power_strike_tier3.tres",
+      "subject": "An immense dark metal warhammer with a molten golden core smashing a fractured floating stone sphere, vivid amber shockwave and major black stone shards. Master armor-shattering impact.",
+      "source_filename": "exec-b6be6468-bd80-4ac2-9906-9dfd2449aaf6.png"
+    },
+    {
+      "key": "whirlwind",
+      "name": "Whirlwind",
+      "image": "res://assets/skills/whirlwind.png",
+      "resource": "res://resources/skills/skill_whirlwind.tres",
+      "subject": "A broad silver sword blade spiralling around a clearly defined circular steel-white wind vortex, restrained crimson cutting edge accents. One readable circular spinning attack silhouette.",
+      "source_filename": "exec-ec68c040-30a2-40c4-a516-05212ef82633.png"
+    },
+    {
+      "key": "whirlwind_tier2",
+      "name": "Whirlwind II",
+      "image": "res://assets/skills/whirlwind_tier2.png",
+      "resource": "res://resources/skills/skill_whirlwind_tier2.tres",
+      "subject": "Two crescent silver sword blades circling a strong steel-white wind spiral with brighter crimson ribbon trails, sharp clean rotation silhouette, advanced sweeping attack.",
+      "source_filename": "exec-fb44e954-afac-4bdd-a7fc-5438fda9d0f0.png"
+    },
+    {
+      "key": "whirlwind_tier3",
+      "name": "Vortex of Souls",
+      "image": "res://assets/skills/whirlwind_tier3.png",
+      "resource": "res://resources/skills/skill_whirlwind_tier3.tres",
+      "subject": "Three ghostly silver blades spiralling around a hollow teal spectral vortex, wisps of restless spirit energy, fine crimson cutting accents, powerful master spinning attack.",
+      "source_filename": "exec-342d159c-3a0f-470d-9448-22333b9cf81b.png"
+    },
+    {
+      "key": "snipe",
+      "name": "Snipe",
+      "image": "res://assets/skills/snipe.png",
+      "resource": "res://resources/skills/skill_snipe.tres",
+      "subject": "One long silver arrow with dark fletching flying diagonally through a thin luminous amber targeting ring, bright sharp arrowhead, minimal golden motion trail. Precision archer shot.",
+      "source_filename": "exec-234af0c3-6a74-4df9-a587-8527facc5cf4.png"
+    },
+    {
+      "key": "snipe_tier2",
+      "name": "Snipe II",
+      "image": "res://assets/skills/snipe_tier2.png",
+      "resource": "res://resources/skills/skill_snipe_tier2.tres",
+      "subject": "One ornate steel arrow with a broad piercing arrowhead flying through two concentric amber targeting rings, brighter golden trail and sparks. Advanced precision archer shot.",
+      "source_filename": "exec-8cd461d0-24f5-4419-abcf-b9f9fb5a3fe9.png"
+    },
+    {
+      "key": "snipe_tier3",
+      "name": "Shadow Hunt",
+      "image": "res://assets/skills/snipe_tier3.png",
+      "resource": "res://resources/skills/skill_snipe_tier3.tres",
+      "subject": "A black obsidian arrow with brilliant silver tip guided by a spectral violet raven-wing shaped wake and a thin cold teal tracking arc. Master void-guided arrow, no actual bird.",
+      "source_filename": "exec-32e948b1-ca4b-4e0d-a1ba-65d2e164467f.png"
+    },
+    {
+      "key": "fireball",
+      "name": "Fireball",
+      "image": "res://assets/skills/fireball.png",
+      "resource": "res://resources/skills/skill_fireball.tres",
+      "subject": "A single blazing orange-red fireball with a bright molten yellow core and a curved flame tail, travelling diagonally upward, tiny embers. Strong simple unmistakable fire spell silhouette.",
+      "source_filename": "exec-3f902406-692e-496d-b6c5-778e7c507c52.png"
+    },
+    {
+      "key": "fireball_tier2",
+      "name": "Fireball II",
+      "image": "res://assets/skills/fireball_tier2.png",
+      "resource": "res://resources/skills/skill_fireball_tier2.tres",
+      "subject": "A large intense orange-red fireball with white-hot golden core and a double curling flame tail, two smaller surrounding sparks, clearly more powerful than a basic fireball.",
+      "source_filename": "exec-fcfb6413-4934-4dde-bb45-952318470689.png"
+    },
+    {
+      "key": "fireball_tier3",
+      "name": "Hellfire Torrent",
+      "image": "res://assets/skills/fireball_tier3.png",
+      "resource": "res://resources/skills/skill_fireball_tier3.tres",
+      "subject": "A jagged demonic red-violet rift pouring three distinct streams of white-hot orange hellfire downward, flame droplets and cinders. Master infernal rain spell, compact powerful composition.",
+      "source_filename": "exec-b5d3283a-aff6-4a2d-aa69-d9642f354146.png"
+    },
+    {
+      "key": "magic_bolt",
+      "name": "Magic Bolt",
+      "image": "res://assets/skills/magic_bolt.png",
+      "resource": "res://resources/skills/skill_magic_bolt.tres",
+      "subject": "A sharp elongated violet magical energy bolt, electric cyan spear-shaped core, short violet lightning branches and directional particle trail. One focused arcane projectile, not a book.",
+      "source_filename": "exec-dab76b79-1cb0-4bd8-8c41-59dd5fcd1d01.png"
+    },
+    {
+      "key": "magic_bolt_tier2",
+      "name": "Magic Bolt II",
+      "image": "res://assets/skills/magic_bolt_tier2.png",
+      "resource": "res://resources/skills/skill_magic_bolt_tier2.tres",
+      "subject": "An intense elongated violet energy lance with twin cyan lightning filaments spiralling tightly around its brilliant core, strong directional trail. Advanced single-target arcane projectile.",
+      "source_filename": "exec-a166d0c8-8b9b-4ccc-a8f8-ed44294b8b4d.png"
+    },
+    {
+      "key": "magic_bolt_tier3",
+      "name": "Arcane Overload",
+      "image": "res://assets/skills/magic_bolt_tier3.png",
+      "resource": "res://resources/skills/skill_magic_bolt_tier3.tres",
+      "subject": "A huge concentrated cyan-white energy spear erupting through a shattered violet arcane halo, branching violet lightning wrapped around the projectile, brilliant controlled focal point. Master magic bolt.",
+      "source_filename": "exec-9d03ae5e-ee8c-4b7e-a3f5-86860459c859.png"
+    },
+    {
+      "key": "arcane_blast",
+      "name": "Arcane Blast",
+      "image": "res://assets/skills/arcane_blast.png",
+      "resource": "res://resources/skills/skill_arcane_blast.tres",
+      "subject": "A compact violet arcane orb bursting outward into a circular cyan-violet shockwave, bright central star, four broad magical rays, unmistakable radial magical explosion.",
+      "source_filename": "exec-3c9b7422-1dac-47fd-9fb2-c8c537a780ca.png"
+    },
+    {
+      "key": "arcane_blast_tier2",
+      "name": "Arcane Blast II",
+      "image": "res://assets/skills/arcane_blast_tier2.png",
+      "resource": "res://resources/skills/skill_arcane_blast_tier2.tres",
+      "subject": "An intense violet orb exploding into two layered cyan-violet shockwave rings, white starburst core and floating obsidian shards, advanced radial arcane explosion.",
+      "source_filename": "exec-9ab6abca-7015-4f45-978c-241d93f331f3.png"
+    },
+    {
+      "key": "arcane_blast_tier3",
+      "name": "Void Singularity",
+      "image": "res://assets/skills/arcane_blast_tier3.png",
+      "resource": "res://resources/skills/skill_arcane_blast_tier3.tres",
+      "subject": "A perfectly black circular void core with an intense violet and cyan accretion ring, curved luminous trails and several stone shards being pulled inward. Master gravitational singularity, simple powerful circular silhouette.",
+      "source_filename": "exec-ac1a4335-41ff-40fa-9c4c-134456c6ca98.png"
+    },
+    {
+      "key": "smite",
+      "name": "Smite",
+      "image": "res://assets/skills/smite.png",
+      "resource": "res://resources/skills/skill_smite.tres",
+      "subject": "A single brilliant ivory-gold lightning column striking a small dark cracked sigil stone, sharp angular lightning silhouette and compact golden impact. Divine magical punishment.",
+      "source_filename": "exec-d07bb87d-27fb-4346-86e5-a12c1c47b7f6.png"
+    },
+    {
+      "key": "smite_tier2",
+      "name": "Smite II",
+      "image": "res://assets/skills/smite_tier2.png",
+      "resource": "res://resources/skills/skill_smite_tier2.tres",
+      "subject": "Two ivory-gold lightning forks converging into one heavy radiant strike on a dark stone, circular pale gold radiance around the impact, advanced divine punishment.",
+      "source_filename": "exec-7344c891-6806-46d7-ac27-2002a70782cc.png"
+    },
+    {
+      "key": "smite_tier3",
+      "name": "Dread Retribution",
+      "image": "res://assets/skills/smite_tier3.png",
+      "resource": "res://resources/skills/skill_smite_tier3.tres",
+      "subject": "A corrupted ivory-gold lightning spear wrapped in deep violet shadow striking through a fractured spectral soul silhouette, gold-violet halo behind. Master corrupted divine judgment, no gore.",
+      "source_filename": "exec-c48bf1dc-33b9-449f-9cfd-b2c29dde5c56.png"
+    },
+    {
+      "key": "heal",
+      "name": "Heal",
+      "image": "res://assets/skills/heal.png",
+      "resource": "res://resources/skills/skill_heal.tres",
+      "subject": "Two softly cupped armored hands cradling one luminous emerald-green life flame, warm ivory core, restrained green healing motes. Gentle restoration spell, clean centered silhouette.",
+      "source_filename": "exec-b8c58498-aa31-4138-a797-9dafefb16d7e.png"
+    },
+    {
+      "key": "heal_tier2",
+      "name": "Heal II",
+      "image": "res://assets/skills/heal_tier2.png",
+      "resource": "res://resources/skills/skill_heal_tier2.tres",
+      "subject": "Two cupped silver armored hands cradling a larger emerald-green life flame with two curling luminous leaf-shaped wisps, brighter ivory core and green healing motes. Advanced restoration spell.",
+      "source_filename": "exec-053f8c3e-fb80-4c56-bb71-9e2bd62e657d.png"
+    },
+    {
+      "key": "heal_tier3",
+      "name": "Abyssal Rejuvenation",
+      "image": "res://assets/skills/heal_tier3.png",
+      "resource": "res://resources/skills/skill_heal_tier3.tres",
+      "subject": "A radiant emerald and teal tree-of-life sprout rising from two cupped dark silver hands, ivory heart-shaped light at its roots, sweeping luminous green branches, shadow-violet outer aura. Master healing spell.",
+      "source_filename": "exec-5b93d6ad-d1e0-47a2-8141-d611c7913be1.png"
+    },
+    {
+      "key": "rally",
+      "name": "Rally",
+      "image": "res://assets/skills/rally.png",
+      "resource": "res://resources/skills/skill_rally.tres",
+      "subject": "A single weathered crimson battlefield pennant on a dark steel spear, warm amber-gold glow rising around it as a sign of renewed courage, one green recovery spark. Compact banner silhouette.",
+      "source_filename": "exec-bbca09ee-968a-4a0e-9a6d-a41616d21483.png"
+    },
+    {
+      "key": "rally_tier2",
+      "name": "Rally II",
+      "image": "res://assets/skills/rally_tier2.png",
+      "resource": "res://resources/skills/skill_rally_tier2.tres",
+      "subject": "A proud crimson battlefield banner with a steel spear tip surrounded by two curved amber-gold waves of inspiring energy, several emerald recovery sparks, advanced rally ability. No emblem letters.",
+      "source_filename": "exec-37853746-8594-4000-88d9-0551e903ee14.png"
+    },
+    {
+      "key": "rally_tier3",
+      "name": "Dominator's Decree",
+      "image": "res://assets/skills/rally_tier3.png",
+      "resource": "res://resources/skills/skill_rally_tier3.tres",
+      "subject": "A dark steel crown suspended above a crimson command banner, three sweeping golden rays extending downward to three emerald life lights, powerful regal master party-wide restorative command.",
+      "source_filename": "exec-81da1fa4-93ae-4a3d-aeb8-73595cc4d9d0.png"
+    },
+    {
+      "key": "abyssal_chains",
+      "name": "Abyssal Chains",
+      "image": "res://assets/skills/abyssal_chains.png",
+      "resource": "res://resources/skills/skill_abyssal_chains.tres",
+      "subject": "Three heavy black iron chain segments with glowing violet links wrapping tightly around a spectral cyan soul flame, sharp outward purple arcs implying a stunning bind. Boss void-chain control spell.",
+      "source_filename": "exec-2bc02e1a-58b6-4b9b-8164-d70077939aab.png"
+    },
+    {
+      "key": "void_shackle",
+      "name": "Void Shackle",
+      "image": "res://assets/skills/void_shackle.png",
+      "resource": "res://resources/skills/skill_void_shackle.tres",
+      "subject": "A single large broken-open dark iron wrist shackle snapping closed around a brilliant violet orb, two short black chain tails and cold cyan magical sparks. Distinct from multiple binding chains.",
+      "source_filename": "exec-95956f17-e637-4f85-ac2c-9705677bcba0.png"
+    },
+    {
+      "key": "soul_rend",
+      "name": "Soul Rend",
+      "image": "res://assets/skills/soul_rend.png",
+      "resource": "res://resources/skills/skill_soul_rend.tres",
+      "subject": "Two curved dark silver claws tearing across a translucent teal soul-shaped flame, three bright crimson diagonal spectral wounds with drifting red wisps, no body or gore. Boss soul-tearing bleed attack.",
+      "source_filename": "exec-61f8fc2f-62a5-49a3-8561-beaebb4ced41.png"
+    },
+    {
+      "key": "execute",
+      "name": "Soul Execute",
+      "image": "res://assets/skills/execute.png",
+      "resource": "res://resources/skills/skill_execute.tres",
+      "subject": "A large dark silver execution blade descending through a fragile violet spectral soul flame, brilliant crimson cutting edge and sharp white final-impact flare. Decisive finisher silhouette, no body or gore.",
+      "source_filename": "exec-cb5e43e4-1980-4f98-ab8a-622e643fa95e.png"
+    },
+    {
+      "key": "behemoth_slam",
+      "name": "Ruinous Slam",
+      "image": "res://assets/skills/behemoth_slam.png",
+      "resource": "res://resources/skills/skill_behemoth_slam.tres",
+      "subject": "An enormous armored stone-and-obsidian monster fist smashing into black ground, vivid amber radial cracks, a broad dusty shockwave ring and a few large rock shards. Boss earth-shattering slam, no full monster.",
+      "source_filename": "exec-033a18ef-f1a2-4fdd-96f5-2d3a5010453c.png"
+    }
+  ]
+}

@@ -20,5 +20,5 @@ can_merge = false
 merge_result_id = ""
 ex_ingredient_a = ""
 ex_ingredient_b = ""
-icon_path = ""
+icon_path = "res://assets/skills/smite_tier3.png"
 vfx_id = "15_Cult"

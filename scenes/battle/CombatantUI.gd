@@ -44,17 +44,15 @@ func setup(data: Dictionary) -> void:
 
 	if data.has("skills"):
 		for skill in data["skills"]:
-			var skill_icon = load("res://scenes/ui/ModelView2D.tscn").instantiate()
+			var skill_icon = SkillIcon.new()
 			var icon_size = _skill_icon_size()
 			skill_icon.custom_minimum_size = Vector2(icon_size, icon_size)
-			skill_icon.spin_enabled = false
 			skill_icon.mouse_filter = Control.MOUSE_FILTER_STOP
 			skill_icon.tooltip_text = "Left-click to unequip: " + skill.display_name
 
 			skills_container.add_child(skill_icon)
-			if skill.vfx_id != "":
-				skill_icon.load_model(skill.vfx_id)
-				skill_icon.set_color_tint(skill.type_color)
+			skill_icon.setup(skill)
+			skill_icon.tooltip_text = "Left-click to unequip: " + skill.display_name
 
 			skill_icon.gui_input.connect(func(event: InputEvent):
 				if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:

@@ -20,5 +20,5 @@ can_merge = true
 merge_result_id = "arcane_blast_tier2"
 ex_ingredient_a = ""
 ex_ingredient_b = ""
-icon_path = ""
+icon_path = "res://assets/skills/arcane_blast.png"
 vfx_id = "24_Element_Dark"

@@ -20,5 +20,5 @@ can_merge = true
 merge_result_id = "snipe_tier3"
 ex_ingredient_a = ""
 ex_ingredient_b = ""
-icon_path = ""
+icon_path = "res://assets/skills/snipe_tier2.png"
 vfx_id = "21_Element_Lightning"

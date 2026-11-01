@@ -1,15 +1,15 @@
 [gd_scene load_steps=8 format=3]
 
 [ext_resource type="Script" path="res://scenes/battle/SkillCard.gd" id="1_script"]
-[ext_resource type="PackedScene" path="res://scenes/ui/ModelView2D.tscn" id="2_model_view"]
+[ext_resource type="Script" path="res://scenes/ui/SkillIcon.gd" id="2_icon"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bg"]
-bg_color = Color(0, 0, 0, 0)
+bg_color = Color(0.025, 0.03, 0.045, 0.97)
 border_width_left = 2
 border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
-border_color = Color(0, 0, 0, 0)
+border_color = Color(0.28, 0.3, 0.4, 0.85)
 corner_radius_top_left = 8
 corner_radius_top_right = 8
 corner_radius_bottom_right = 8
@@ -67,17 +67,52 @@ grow_vertical = 2
 mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_bg")
 
-[node name="ModelView2D" parent="." instance=ExtResource("2_model_view")]
-custom_minimum_size = Vector2(200, 280)
+[node name="SkillIcon" type="TextureRect" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+offset_left = 10.0
+offset_top = 10.0
+offset_right = -10.0
+offset_bottom = -62.0
 mouse_filter = 2
-fill_ratio = 1.0
-spin_enabled = false
+expand_mode = 1
+stretch_mode = 5
+script = ExtResource("2_icon")
+
+[node name="FrontInfo" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = -57.0
+offset_right = -8.0
+offset_bottom = -8.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+theme_override_constants/separation = 3
+alignment = 1
+
+[node name="NameLabel" type="Label" parent="FrontInfo"]
+layout_mode = 2
+mouse_filter = 2
+label_settings = SubResource("LabelSettings_back_name")
+horizontal_alignment = 1
+text = "Skill Name"
+autowrap_mode = 3
+
+[node name="TierLabel" type="Label" parent="FrontInfo"]
+layout_mode = 2
+mouse_filter = 2
+label_settings = SubResource("LabelSettings_tier")
+horizontal_alignment = 1
+text = "Tier I"
 
 [node name="BackPanel" type="Panel" parent="."]
 visible = false

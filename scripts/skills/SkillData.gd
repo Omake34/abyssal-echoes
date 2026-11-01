@@ -83,3 +83,10 @@ var type_color: Color:
 
 ## VFX effect key — BattleScene uses this to play the right particle effect
 @export var vfx_id: String = ""
+
+# PURPOSE: Share the imported icon texture across every view of this skill.
+func get_icon_texture() -> Texture2D:
+	if icon_path.is_empty() or not ResourceLoader.exists(icon_path):
+		push_warning("[SkillData] Missing icon for " + display_name + ": " + icon_path)
+		return null
+	return load(icon_path) as Texture2D
