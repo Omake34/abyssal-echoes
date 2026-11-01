@@ -6,6 +6,7 @@ extends Control
 @onready var scroll_container: ScrollContainer = $ScrollContainer
 @onready var map_container: Control = $ScrollContainer/MapContainer
 @onready var lines_container: Control = $ScrollContainer/MapContainer/Lines
+@onready var back_button: Button = $BackButton
 
 const X_SPACING: int = 200
 const Y_SPACING: int = 150
@@ -20,8 +21,11 @@ func _ready() -> void:
 		RunState.current_map = generator.generate_map()
 		RunState.save_run() # Save immediately after generation
 	
+	back_button.pressed.connect(_on_back_pressed)
+	
 	# 2. Render the map
 	_render_map()
+
 
 func _render_map() -> void:
 	# Clear existing (if any)
@@ -171,3 +175,6 @@ func _create_line(from: Vector2, to: Vector2, color: Color, width: float) -> voi
 	line.add_point(to)
 	line.width = width
 	line.default_color = color
+
+func _on_back_pressed() -> void:
+	EventBus.scene_change_requested.emit("res://scenes/MainMenu.tscn")

@@ -25,6 +25,14 @@ func resume_run() -> void:
 	if not RunState.run_active:
 		push_error("[SceneManager] No active run to resume")
 		return
+
+	# PURPOSE: Resume the unclaimed reward before considering the encounter type.
+	if not RunState.pending_reward_node_id.is_empty() and RunState.pending_reward_node_id == RunState.current_node_id:
+		_transition_to(REWARD_SCENE)
+		return
+	if RunState.completed_node_ids.has(RunState.current_node_id):
+		_transition_to(MAP_SCENE)
+		return
 		
 	if RunState.current_node_id == "":
 		_transition_to(MAP_SCENE)
@@ -80,6 +88,7 @@ func _on_map_node_selected(node_id: String) -> void:
 	match node_data["type"]:
 		"battle", "elite", "boss":
 			print("[SceneManager] Starting %s encounter..." % node_data["type"])
+			RunState.encounter_gold_start = int(RunState.run_stats.get("gold_earned", 0))
 			_transition_to(BATTLE_SCENE)
 		"shop":
 			print("[SceneManager] Entering shop...")
@@ -94,6 +103,7 @@ func _on_map_node_selected(node_id: String) -> void:
 			_transition_to(MAP_SCENE)
 		"treasure":
 			print("[SceneManager] Found treasure!")
+			RunState.prepare_reward(node_id)
 			_transition_to(REWARD_SCENE)
 		"start":
 			RunState.completed_node_ids.append(node_id)
@@ -108,6 +118,10 @@ func _on_battle_ended(result: String) -> void:
 			RunState.end_run(true)
 			return
 			
+		# Track that we have a pending reward for this node
+		var gold_earned = int(RunState.run_stats.get("gold_earned", 0)) - RunState.encounter_gold_start
+		RunState.prepare_reward(RunState.current_node_id, gold_earned)
+
 		# Wait a moment for the player to see the result, then go to rewards
 		await get_tree().create_timer(2.0).timeout
 		_transition_to(REWARD_SCENE)

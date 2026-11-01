@@ -3,6 +3,7 @@ extends Control
 @onready var hero_options_container: HBoxContainer = $MarginContainer/VBoxContainer/ScrollContainer/HeroOptions
 @onready var instruction_label: Label = $MarginContainer/VBoxContainer/Instruction
 @onready var start_button: Button = $MarginContainer/VBoxContainer/StartButton
+@onready var back_button: Button = $BackButton
 
 var selected_heroes: Array[HeroData] = []
 var max_party_size: int = 4
@@ -12,9 +13,11 @@ var hero_pool: Array[String] = []
 func _ready() -> void:
 	hero_options_container.alignment = BoxContainer.ALIGNMENT_CENTER
 	start_button.pressed.connect(_on_start_pressed)
+	back_button.pressed.connect(_on_back_pressed)
 	_scan_hero_resources()
 	_setup_hero_options()
 	_update_ui()
+
 
 func _scan_hero_resources() -> void:
 	hero_pool.clear()
@@ -150,3 +153,8 @@ func _on_start_pressed() -> void:
 		RunState.party[i]["slot_index"] = i
 	
 	EventBus.scene_change_requested.emit("res://scenes/map/MapView.tscn")
+
+func _on_back_pressed() -> void:
+	RunState.run_active = false
+	RunState.delete_save()
+	EventBus.scene_change_requested.emit("res://scenes/MainMenu.tscn")

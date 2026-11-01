@@ -14,8 +14,14 @@ const MODEL_VIEW_SCENE = preload("res://scenes/ui/ModelView2D.tscn")
 @onready var heroes_tab: Button = %HeroesTab
 @onready var enemies_tab: Button = %EnemiesTab
 @onready var back_button: Button = $MainLayout/Header/BackButton
+@onready var skill_filters: HBoxContainer = %SkillFilters
+@onready var filter_all: Button = %FilterAll
+@onready var filter_t1: Button = %FilterT1
+@onready var filter_t2: Button = %FilterT2
+@onready var filter_t3: Button = %FilterT3
 
 var current_tab: Tab = Tab.SKILLS
+var current_tier_filter: int = 0 # 0 = All, 1 = T1, 2 = T2, 3 = T3
 var all_skills: Array = []
 var all_heroes: Array = []
 var all_enemies: Array = []
@@ -28,6 +34,11 @@ func _ready() -> void:
 	heroes_tab.pressed.connect(_on_tab_pressed.bind(Tab.HEROES))
 	enemies_tab.pressed.connect(_on_tab_pressed.bind(Tab.ENEMIES))
 	back_button.pressed.connect(_on_back_pressed)
+	
+	filter_all.pressed.connect(_on_filter_pressed.bind(0))
+	filter_t1.pressed.connect(_on_filter_pressed.bind(1))
+	filter_t2.pressed.connect(_on_filter_pressed.bind(2))
+	filter_t3.pressed.connect(_on_filter_pressed.bind(3))
 	
 	_load_all_resources()
 	_refresh_display()
@@ -68,6 +79,17 @@ func _on_tab_pressed(tab: Tab) -> void:
 	skills_tab.button_pressed = (tab == Tab.SKILLS)
 	heroes_tab.button_pressed = (tab == Tab.HEROES)
 	enemies_tab.button_pressed = (tab == Tab.ENEMIES)
+	skill_filters.visible = (tab == Tab.SKILLS)
+	
+	_refresh_display()
+
+func _on_filter_pressed(tier: int) -> void:
+	current_tier_filter = tier
+	
+	filter_all.button_pressed = (tier == 0)
+	filter_t1.button_pressed = (tier == 1)
+	filter_t2.button_pressed = (tier == 2)
+	filter_t3.button_pressed = (tier == 3)
 	
 	_refresh_display()
 
@@ -80,7 +102,10 @@ func _refresh_display() -> void:
 	
 	match current_tab:
 		Tab.SKILLS:
-			items = all_skills
+			if current_tier_filter > 0:
+				items = all_skills.filter(func(s): return s.tier == current_tier_filter)
+			else:
+				items = all_skills
 			discovered_ids = RunState.meta["discovered_skills"]
 		Tab.HEROES:
 			items = all_heroes
@@ -90,12 +115,13 @@ func _refresh_display() -> void:
 			discovered_ids = RunState.meta["discovered_enemies"]
 	
 	for item in items:
-		var is_discovered = discovered_ids.has(item.id)
+		var is_discovered = discovered_ids.has(item.id) or (current_tab == Tab.SKILLS)
 		_create_item_node(item, is_discovered)
 
 func _create_item_node(item: Resource, is_discovered: bool) -> void:
 	var btn = Button.new()
-	btn.custom_minimum_size = Vector2(100, 80)
+	btn.custom_minimum_size = Vector2(110, 85)
+	btn.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	
 	if is_discovered:
 		btn.text = _get_button_label(item)
@@ -107,6 +133,7 @@ func _create_item_node(item: Resource, is_discovered: bool) -> void:
 		btn.modulate = Color(0.3, 0.3, 0.3)
 	
 	grid.add_child(btn)
+
 
 func _get_button_label(item: Resource) -> String:
 	if item is SkillData:

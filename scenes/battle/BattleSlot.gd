@@ -3,9 +3,10 @@ extends PanelContainer
 
 var slot_index: int = 0
 var is_hero_side: bool = true
+var slot_size := Vector2(100, 120)
 
 func _ready() -> void:
-	custom_minimum_size = Vector2(100, 120)
+	custom_minimum_size = slot_size
 	var style = StyleBoxFlat.new()
 	style.bg_color = Color(0.1, 0.1, 0.15, 1)
 	style.border_width_left = 1
@@ -14,6 +15,23 @@ func _ready() -> void:
 	style.border_width_bottom = 1
 	style.border_color = Color(0.3, 0.3, 0.4, 1)
 	add_theme_stylebox_override("panel", style)
+
+func set_slot_size(value: Vector2) -> void:
+	slot_size = value
+	custom_minimum_size = value
+	for child in get_children():
+		if child is Control:
+			child.custom_minimum_size = value
+
+func _notification(what: int) -> void:
+	# If drag ended without dropping on a valid target, restore alpha
+	if what == NOTIFICATION_DRAG_END:
+		if get_child_count() > 0:
+			get_child(0).modulate.a = 1.0
+	elif what == NOTIFICATION_CHILD_ORDER_CHANGED:
+		for child in get_children():
+			if child is Control:
+				child.custom_minimum_size = slot_size
 
 func _get_drag_data(_at_position: Vector2) -> Variant:
 	if get_child_count() == 0 or not is_hero_side:
@@ -97,9 +115,3 @@ func _drop_data(_at_position: Vector2, data: Variant) -> void:
 			var source = data.get("source_inventory_slot")
 			if is_instance_valid(source):
 				source.modulate.a = 1.0
-
-func _notification(what: int) -> void:
-	# If drag ended without dropping on a valid target, restore alpha
-	if what == NOTIFICATION_DRAG_END:
-		if get_child_count() > 0:
-			get_child(0).modulate.a = 1.0

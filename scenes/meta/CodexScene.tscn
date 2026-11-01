@@ -73,6 +73,40 @@ layout_mode = 2
 toggle_mode = true
 text = "ENEMIES"
 
+[node name="SkillFilters" type="HBoxContainer" parent="MainLayout"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="FilterAll" type="Button" parent="MainLayout/SkillFilters"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(80, 35)
+layout_mode = 2
+toggle_mode = true
+button_pressed = true
+text = "All"
+
+[node name="FilterT1" type="Button" parent="MainLayout/SkillFilters"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(80, 35)
+layout_mode = 2
+toggle_mode = true
+text = "T1"
+
+[node name="FilterT2" type="Button" parent="MainLayout/SkillFilters"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(80, 35)
+layout_mode = 2
+toggle_mode = true
+text = "T2"
+
+[node name="FilterT3" type="Button" parent="MainLayout/SkillFilters"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(80, 35)
+layout_mode = 2
+toggle_mode = true
+text = "T3"
+
 [node name="ContentArea" type="HBoxContainer" parent="MainLayout"]
 layout_mode = 2
 size_flags_vertical = 3

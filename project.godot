@@ -18,7 +18,7 @@ config/name="Abyssal Echoes: Void Weaver"
 config/description="A dark fantasy roguelite auto-battler. As the Void Weaver, you must merge skills across classes and lead your party through the abyss."
 config/version="0.1.0"
 run/main_scene="res://scenes/MainMenu.tscn"
-config/features=PackedStringArray("4.6", "GL Compatibility")
+config/features=PackedStringArray("4.7", "GL Compatibility")
 
 [autoload]
 

@@ -1,8 +1,8 @@
 # PURPOSE: MapData — Defines the structure of a single node on the run map.
-# The run map is a graph of MapNode objects. The player picks a path through them.
+# The run map is a graph of map data objects. The player picks a path through them.
 # MapGenerator.gd creates the full map at the start of each run.
 
-class_name MapNode
+class_name MapData
 extends RefCounted
 
 # ── NODE TYPES ────────────────────────────────────────────────────────────────
@@ -90,8 +90,8 @@ func to_dict() -> Dictionary:
 	}
 
 ## Load from dictionary (for run save/load)
-static func from_dict(d: Dictionary) -> MapNode:
-	var node = MapNode.new()
+static func from_dict(d: Dictionary) -> MapData:
+	var node = MapData.new()
 	node.id           = d.get("id", 0)
 	node.type         = d.get("type", NodeType.BATTLE)
 	node.next_node_ids = d.get("next_node_ids", [])
