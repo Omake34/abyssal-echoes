@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ArenaAbilityData" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/skills/ArenaAbilityData.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "arcane_surge_tier3"
+display_name = "Arcane Surge"
+icon_path = "res://assets/skills/arcane_blast_tier3.png"
+activation = "before_attack"
+effect_id = "damage_multiplier"
+counter = "casts"
+trigger_count = 3
+power = 2.2
+requires_magic_attack = true
+skill_type = "magic"
+family_id = "arcane_surge"
+tier = 3

@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="ArenaAbilityData" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/skills/ArenaAbilityData.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "power_strike"
+display_name = "Power Strike"
+icon_path = "res://assets/skills/power_strike.png"
+activation = "before_attack"
+effect_id = "damage_multiplier"
+trigger_count = 3
+power = 2.0
+skill_type = "physical"
+family_id = "power_strike"
+tier = 1

@@ -111,6 +111,7 @@ func _create_item_node(item: Resource, is_discovered: bool) -> void:
 	if is_discovered:
 		btn.text = _get_button_label(item)
 		if item is SkillData:
+			SkillVisualStyle.style_button(btn, item.skill_type, item.tier)
 			btn.icon = item.get_icon_texture()
 			btn.expand_icon = true
 			btn.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -128,15 +129,17 @@ func _create_item_node(item: Resource, is_discovered: bool) -> void:
 
 func _get_button_label(item: Resource) -> String:
 	if item is SkillData:
-		return "%s\nT%d" % [item.display_name, item.tier]
+		return "%s\n%s · %s" % [item.display_name, SkillVisualStyle.category_name(item.skill_type), SkillVisualStyle.roman(item.tier)]
 	return item.display_name
 
 func _show_item_details(item: Resource) -> void:
 	item_name.text = item.display_name
+	item_type.remove_theme_color_override("font_color")
 	_show_detail_visual(item)
 	
 	if item is SkillData:
-		item_type.text = "Skill - " + item.skill_type.capitalize() + " - Tier " + str(item.tier)
+		item_type.text = SkillVisualStyle.category_name(item.skill_type) + " · " + SkillVisualStyle.tier_label(item.tier)
+		item_type.add_theme_color_override("font_color", item.type_color)
 		item_desc.text = item.description
 	elif item is HeroData:
 		item_type.text = "Hero - " + item.hero_class.capitalize()

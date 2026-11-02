@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="ArenaAbilityData" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/skills/ArenaAbilityData.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "pierce_tier2"
+display_name = "Pierce"
+icon_path = "res://assets/skills/snipe_tier2.png"
+activation = "after_attack"
+effect_id = "pierce"
+power = 0.8
+secondary_range_cells = 6.0
+line_half_width = 1.0
+skill_type = "physical"
+family_id = "pierce"
+tier = 2

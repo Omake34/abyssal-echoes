@@ -76,6 +76,15 @@ theme_override_font_sizes/font_size = 24
 text = "START NEW RUN"
 alignment = 0
 
+[node name="ArenaTrialButton" type="Button" parent="MainLayout/LeftSection"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+tooltip_text = "Try the new shared arena with four heroes. Your saved run is untouched."
+theme_override_colors/font_color = Color(0.43, 0.84, 0.8, 1)
+theme_override_font_sizes/font_size = 24
+text = "ARENA TRIAL"
+alignment = 0
+
 [node name="TalentButton" type="Button" parent="MainLayout/LeftSection"]
 custom_minimum_size = Vector2(0, 50)
 layout_mode = 2

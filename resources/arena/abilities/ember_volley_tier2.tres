@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ArenaAbilityData" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/skills/ArenaAbilityData.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "ember_volley_tier2"
+display_name = "Ember Volley"
+icon_path = "res://assets/skills/fireball_tier2.png"
+activation = "after_attack"
+effect_id = "burn"
+trigger_count = 4
+power = 11.0
+duration_seconds = 4.0
+interval_seconds = 1.0
+skill_type = "magic"
+family_id = "ember_volley"
+tier = 2

@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="ArenaUnitProfile" load_steps=4 format=3]
+[ext_resource type="Script" path="res://scripts/battle/ArenaUnitProfile.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/skills/ArenaAbilityData.gd" id="2"]
+[ext_resource type="Resource" path="res://resources/arena/abilities/pierce.tres" id="3"]
+[resource]
+script = ExtResource("1")
+basic_attack_range = 4.0
+abilities = Array[ExtResource("2")]([ExtResource("3")])

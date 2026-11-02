@@ -31,25 +31,16 @@ func setup(data: SkillData) -> void:
 	
 	var type_color = data.type_color
 	type_strip.color = type_color
-	
-	if data.tier >= 3:
-		_apply_master_glow(type_color)
+	type_strip.offset_bottom = 3.0 + float(data.tier) * 2.0
+	bg_panel.add_theme_stylebox_override("panel", SkillVisualStyle.panel_style(data.skill_type, data.tier))
+	back_panel.add_theme_stylebox_override("panel", SkillVisualStyle.panel_style(data.skill_type, data.tier))
+	for label in [tier_label, back_tier_label]:
+		label.label_settings = label.label_settings.duplicate()
+		label.label_settings.font_color = type_color
+		label.label_settings.font_size = 12 if data.tier == 1 else 13 if data.tier == 2 else 14
 
 func _get_tier_roman(tier: int) -> String:
-	match tier:
-		1: return "Tier I"
-		2: return "Tier II"
-		3: return "Tier III (Master)"
-		4: return "EX"
-	return "Tier " + str(tier)
-
-func _apply_master_glow(color: Color) -> void:
-	var style = bg_panel.get_theme_stylebox("panel").duplicate()
-	if style is StyleBoxFlat:
-		style.border_color = color
-		style.shadow_color = color
-		style.shadow_size = 10
-		bg_panel.add_theme_stylebox_override("panel", style)
+	return SkillVisualStyle.tier_label(tier)
 
 func _on_mouse_entered() -> void:
 	_set_back_visible(true)

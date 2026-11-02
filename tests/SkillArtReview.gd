@@ -7,16 +7,25 @@ const CARD_SCENE = preload("res://scenes/battle/SkillCard.tscn")
 func _ready() -> void:
 	var capture_path = ""
 	var contact_sheet = false
+	var tier_review = false
 	for argument in OS.get_cmdline_user_args():
 		if argument.begins_with("--capture-sheet="):
 			capture_path = argument.trim_prefix("--capture-sheet=")
 			contact_sheet = true
 		elif argument.begins_with("--capture-cards="):
 			capture_path = argument.trim_prefix("--capture-cards=")
+		elif argument.begins_with("--capture-tiers="):
+			capture_path = argument.trim_prefix("--capture-tiers=")
+			tier_review = true
 	if contact_sheet:
 		get_tree().root.content_scale_size = Vector2i(1440, 1280)
 		get_tree().root.size = Vector2i(1440, 1280)
-	_build_gallery(contact_sheet)
+	if tier_review:
+		get_tree().root.content_scale_size = Vector2i(960, 1040)
+		get_tree().root.size = Vector2i(960, 1040)
+		_build_tier_review()
+	else:
+		_build_gallery(contact_sheet)
 	if not capture_path.is_empty():
 		await get_tree().process_frame
 		await RenderingServer.frame_post_draw
@@ -25,6 +34,40 @@ func _ready() -> void:
 		if error != OK:
 			push_error("[SkillArtReview] Could not save contact sheet: " + str(error))
 		get_tree().quit(0 if error == OK else 1)
+
+func _build_tier_review() -> void:
+	var background := ColorRect.new()
+	background.color = Color("080c13")
+	add_child(background)
+	background.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	var margin := MarginContainer.new()
+	add_child(margin)
+	margin.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	for side in ["left", "right", "top", "bottom"]:
+		margin.add_theme_constant_override("margin_" + side, 24)
+	var layout := VBoxContainer.new()
+	layout.add_theme_constant_override("separation", 14)
+	margin.add_child(layout)
+	var heading := Label.new()
+	heading.text = "SKILL TYPES & TIERS"
+	heading.add_theme_font_size_override("font_size", 26)
+	layout.add_child(heading)
+	var legend := Label.new()
+	legend.text = "PHYSICAL / RED     ·     MAGIC / BLUE     ·     HEALING / GREEN"
+	layout.add_child(legend)
+	var grid := GridContainer.new()
+	grid.columns = 3
+	grid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	grid.add_theme_constant_override("h_separation", 18)
+	grid.add_theme_constant_override("v_separation", 16)
+	layout.add_child(grid)
+	for tier in range(1, 4):
+		for family in ["power_strike", "fireball", "heal"]:
+			var id: String = family if tier == 1 else "%s_tier%d" % [family, tier]
+			var card = CARD_SCENE.instantiate()
+			card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			grid.add_child(card)
+			card.setup(load("res://resources/skills/skill_%s.tres" % id))
 
 func _build_gallery(contact_sheet: bool) -> void:
 	var background = ColorRect.new()

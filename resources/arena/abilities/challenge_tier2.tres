@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ArenaAbilityData" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/skills/ArenaAbilityData.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "challenge_tier2"
+display_name = "Challenge"
+icon_path = "res://assets/skills/rally_tier2.png"
+activation = "proximity"
+effect_id = "taunt_shield"
+power = 28.0
+range_cells = 3.5
+duration_seconds = 2.5
+cooldown_seconds = 5.0
+skill_type = "physical"
+family_id = "challenge"
+tier = 2

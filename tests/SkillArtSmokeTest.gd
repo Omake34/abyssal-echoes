@@ -63,5 +63,20 @@ func _run() -> void:
 	_check(vfx.get_child(0) is Sprite2D and vfx.get_child(0).texture == example.get_icon_texture(), "cast effect uses matching illustration")
 	await get_tree().create_timer(0.4).timeout
 	_check(not is_instance_valid(vfx), "cast effect cleans up")
+	var reusable = load("res://scenes/battle/SkillCard.tscn").instantiate()
+	add_child(reusable)
+	var weights: Array[int] = []
+	for tier in range(1, 4):
+		var id := "power_strike" if tier == 1 else "power_strike_tier%d" % tier
+		var skill = GameData.get_skill(id)
+		reusable.setup(skill)
+		weights.append(reusable.bg_panel.get_theme_stylebox("panel").border_width_left)
+		_check(reusable.skill_icon.skill_tier == tier and reusable.tier_label.text.contains(SkillVisualStyle.roman(tier)), "card and small icon agree on rank")
+	_check(weights[0] < weights[1] and weights[1] < weights[2], "tiers have progressively stronger frames")
+	reusable.setup(GameData.get_skill("power_strike"))
+	_check(reusable.bg_panel.get_theme_stylebox("panel").shadow_size == 0, "reused card clears the previous master glow")
+	_check(GameData.get_skill("heal").type_color == SkillVisualStyle.HEALING, "legacy support skills use healing green")
+	_check(GameData.get_skill("fireball").type_color == SkillVisualStyle.MAGIC, "legacy magic skills use the shared blue")
+	reusable.free()
 	print("SKILL ART: %d checks, %d failures" % [checks, failures])
 	get_tree().quit(0 if failures == 0 else 1)

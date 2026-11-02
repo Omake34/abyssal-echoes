@@ -71,12 +71,7 @@ extends Resource
 ## Color of the skill's type indicator badge
 var type_color: Color:
 	get:
-		match skill_type:
-			"physical": return Color(0.8, 0.1, 0.1)   # Red
-			"magic":    return Color(0.1, 0.3, 0.9)   # Blue
-			"support":  return Color(0.1, 0.7, 0.2)   # Green
-			"utility":  return Color(0.85, 0.65, 0.0) # Gold
-		return Color.WHITE
+		return SkillVisualStyle.color_for(skill_type)
 
 ## Path to skill icon image (leave empty to use type-colored placeholder)
 @export_file("*.png") var icon_path: String = ""

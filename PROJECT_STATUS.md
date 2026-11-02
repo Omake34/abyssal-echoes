@@ -1,18 +1,37 @@
 # PROJECT STATUS
 ## Abyssal Echoes: Void Weaver — Live Development Tracker
 
-**Last Updated:** November 1, 2026
-**Current Phase:** Playable prototype — combat and build-depth reassessment
+**Last Updated:** November 2, 2026
+**Current Phase:** Playable prototype — shared arena abilities and equipment
 **Overall Progress:** Feature scaffolding exists; tactical gameplay acceptance criteria remain open
 
 ---
 
 ## CURRENT TASK
-> **Reference Game Analysis — installed data and gameplay recording reviewed**
-> Inspected the supplied Time Walker: Dark World 1.0.0.16 Unity build, resolved its configured data tables, inspected official screenshots, and audited the corresponding Godot systems.
-> Findings and the proposed build sequence: `docs/reference-analysis/TIME_WALKER_REVERSE_ENGINEERING.md`.
-> Sampled YouTube evidence and refined implementation decisions: `docs/reference-analysis/YOUTUBE_GAMEPLAY_NOTES.md`.
-> Recommended next system: authoritative combat placement and a shared arena prototype. Implementation has not started.
+> **Shared Arena Trial — resource-defined abilities and preparation equipment implemented**
+> Open ARENA TRIAL from the main menu. Four heroes fight in a shared arena with movement, range, local taunt/shield, meaningful healing, spell counters, two Archer patterns, and two encounters.
+> Playtest instructions, exact trial rules, validation, and remaining work: `docs/ARENA_TRIAL.md`.
+> Normal run routing and saves remain on the existing battle system. Next: expand builds and establish a tested run/reward adapter with inventory/save compatibility.
+
+---
+
+## SHARED ARENA UPDATE — November 2, 2026
+
+- Added a standalone menu-accessible arena using one authoritative cell per unit for placement, occupancy, navigation, range, and targeting. Rendering interpolates positions separately.
+- Implemented working Warrior Challenge/shield, Archer piercing or four-arrow burn, Mage third-spell surge, and Cleric healing with explicit HP units. These rules apply to the trial, not the legacy run battle.
+- Added preparation placement, fixed authored encounters, pause/resume, 1×/2×/3× speed, repeatable resets, readable hit/heal feedback, and four compact contribution cards using the existing skill art.
+- Added left-click dragging with a moving hero preview, highlighted destinations, hero swaps, and safe cancellation on invalid/outside release, Escape, or window focus loss. Clicking to select/place remains supported. Placement is locked once combat begins.
+- Moved ability behavior into 21 editable ArenaAbilityData resources and basic attacks/movement/starting equipment into seven ArenaUnitProfile resources. Combat dispatches by activation and effect instead of hero class. Descriptions and progress text read the same definitions.
+- Added a preparation skill shelf and clickable equipped icons, with three slots per hero, cross-class combinations, compatibility checks, duplicate prevention, atomic loadout replacement, combat locking, and local loadout retention across resets/encounter changes. The trial catalog does not consume saved-run inventory.
+- Added active Unequip actions to equipped shelf entries and explicit UNEQUIP labels beneath equipped icons. Unified physical red, magic blue, and healing green across arena and legacy skill UI. Added a tier picker and 14 stronger tier II/III variants; badges, rank marks, double frames, master corners, and distinct existing illustrations differentiate tiers. Different tiers of one family cannot stack.
+- Fixed content-driven layout shifts during equipment changes. Fixed-height UI regions, equal-width hero panels, three permanent skill slots per hero, a fixed-width shelf/scrollbar, bounded text, and reserved control widths keep the map/cell scale and panel geometry stable. Added regression checks for empty/full/long-text states, real Equip/Unequip clicks, paused combat, and resized windows; empty/full render previews are saved under `art/`.
+- Arena state and signals are isolated from RunState and SceneManager progression. Tests confirm both live run state and saved run/meta bytes stay unchanged.
+- Validation: arena combat **193 checks**, including viewport-dispatched mouse input, real equipment controls, resource edits affecting combat, combined abilities, atomic replacement, and exact preservation of both previous default battle outcomes; reward regression **46 checks** and artwork regression **259 checks** in the current skill presentation pass. All pass in an isolated temporary project/user directory. Godot-rendered preparation/combat previews were visually reviewed.
+- Default-formation baseline: The breach/piercing wins in about 12.1 seconds; Crossfire/Ember wins in about 12.7 seconds with the Warrior fallen. More playtesting is needed before treating these as balanced encounters.
+
+**Added:** arena simulation, board and trial scene; ability/profile resource classes and equipment service; 21 ability and seven unit-profile resources under `resources/arena/`; behavior test and scene; `docs/ARENA_TRIAL.md`; preview images under `art/`. **Modified:** main menu entry and this tracker. No changes to normal battle/reward routing or save formats.
+
+**Still open:** a saved-run inventory/skill adapter, crafting, encounter/reward integration, and production character art. The normal run's previously audited combat gaps remain until that migration is implemented.
 
 ---
 
@@ -47,7 +66,7 @@
 
 **Added:** `assets/skills/` illustrations and manifest, `scenes/ui/SkillIcon.gd`, skill artwork smoke test and review scenes under `tests/`, `tools/PrepareSkillArt.gd`, and preview images under `art/`.
 
-**Validation:** Godot 4.7.2 import succeeds. `SKILL ART: 252 checks, 0 failures` covers every texture, distinct paths, card names/art, inventory, equipment, shop, Codex, and cast-effect cleanup. The reward-flow regression suite still reports `46 checks, 0 failures`. Rendered cards and the labelled contact sheet have been visually inspected.
+**Validation at the original artwork milestone:** Godot 4.7.2 import succeeds. `SKILL ART: 252 checks, 0 failures` covers every texture, distinct paths, card names/art, inventory, equipment, shop, Codex, and cast-effect cleanup. The reward-flow regression suite reports `46 checks, 0 failures`. Rendered cards and the labelled contact sheet were visually inspected. The November 2 presentation update above expands artwork verification to 259 checks.
 
 **Suggested commit message:** `Replace all skill visuals with individual dark fantasy illustrations`
 

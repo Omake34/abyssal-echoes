@@ -22,6 +22,8 @@ func _ready() -> void:
 	talent_button.pressed.connect(_on_talent_pressed)
 	codex_button.pressed.connect(_on_codex_pressed)
 	quit_button.pressed.connect(_on_quit_pressed)
+	$MainLayout/LeftSection/ArenaTrialButton.pressed.connect(func():
+		get_tree().change_scene_to_file("res://scenes/battle/ArenaTrial.tscn"))
 	
 	# Only show continue if a save exists
 	var has_save = RunState.has_saved_run()
