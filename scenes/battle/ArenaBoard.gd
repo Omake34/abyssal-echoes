@@ -11,18 +11,14 @@ const TEAL := Color("6ed7cc")
 const VIOLET := Color("b294f7")
 const HERO_COLORS := {"warrior": Color("cf9d68"), "archer": Color("79cba4"),
 	"mage": Color("ab9ae8"), "cleric": Color("eedaa0")}
-# Blender-rendered atlases, keyed by sprite set. Both share one camera, so one canvas and pivot.
-const SPRITE_SETS := {
-	"warrior": {
-		"east": preload("res://assets/characters/blender_pilot/animated/warrior_east.png"),
-		"west": preload("res://assets/characters/blender_pilot/animated/warrior_west.png"),
-		"north": preload("res://assets/characters/blender_pilot/animated/warrior_north.png"),
-		"south": preload("res://assets/characters/blender_pilot/animated/warrior_south.png")},
-	"riftbound": {
-		"east": preload("res://assets/characters/blender_pilot/animated/riftbound_east.png"),
-		"west": preload("res://assets/characters/blender_pilot/animated/riftbound_west.png"),
-		"north": preload("res://assets/characters/blender_pilot/animated/riftbound_north.png"),
-		"south": preload("res://assets/characters/blender_pilot/animated/riftbound_south.png")}}
+# Blender-rendered atlases, one per set and facing. All share one camera, so one canvas and pivot.
+const SPRITE_DIR := "res://assets/characters/blender_pilot/animated/"
+const SPRITE_SETS := ["warrior", "archer", "mage", "cleric", "assassin", "captain", "riftbound", "raider"]
+const SPRITE_FACINGS := ["east", "west", "north", "south"]
+# Hero roles use their own set; enemy roles map to an enemy model.
+const ENEMY_SPRITES := {"hexer": "riftbound", "raider": "raider"}
+# Loaded on first draw and kept: each atlas is ~7.8 MB of VRAM, so absent sets never load.
+static var _atlases := {}
 const ANIMATION_ROWS := {"idle": 0, "move": 1, "attack": 2, "hit": 3, "death": 4}
 const ANIMATION_SECONDS := {"idle": 1.2, "move": 0.6, "attack": 0.42, "hit": 0.24, "death": 0.72}
 # Fixed render canvas: all directions and sets share the same projected ground anchor.
@@ -127,11 +123,14 @@ func _trigger_animation(uid: int, state: String) -> void:
 
 ## Which rendered atlas a unit uses; empty means the vector fallback figure.
 static func sprite_set(unit: Dictionary) -> String:
-	if unit["hero"] and unit["role"] == "warrior":
-		return "warrior"
-	if not unit["hero"] and unit["role"] == "hexer":
-		return "riftbound"
-	return ""
+	var key: String = unit["role"] if unit["hero"] else ENEMY_SPRITES.get(unit["role"], "")
+	return key if key in SPRITE_SETS else ""
+
+static func atlas(set_name: String, facing: String) -> Texture2D:
+	var key := set_name + "_" + facing
+	if not _atlases.has(key):
+		_atlases[key] = load(SPRITE_DIR + key + ".png")
+	return _atlases[key]
 
 func _update_animation(unit: Dictionary, delta: float) -> void:
 	if sprite_set(unit).is_empty():
@@ -161,7 +160,7 @@ func _draw_sprite(uid: int, set_name: String, tint: Color = Color.WHITE) -> void
 	var animation: Dictionary = visual_animations.get(uid, {"state": "idle", "age": 0.0})
 	var state: String = animation["state"]
 	var frame := mini(5, int(float(animation["age"]) / ANIMATION_SECONDS[state] * 6.0))
-	var texture: Texture2D = SPRITE_SETS[set_name][visual_facings.get(uid, "east")]
+	var texture := atlas(set_name, visual_facings.get(uid, "east"))
 	var origin := Vector2(0, 10) - SPRITE_CANVAS * SPRITE_FOOT_PIVOT
 	var region := Rect2(Vector2(frame, ANIMATION_ROWS[state]) * 256.0, Vector2(256, 256))
 	draw_texture_rect_region(texture, Rect2(origin, SPRITE_CANVAS), region, tint)
@@ -275,7 +274,7 @@ func _hero_at_pointer(pointer: Vector2) -> Dictionary:
 	for hero in simulation.living(true):
 		var center := cell_center(visual_positions[hero["uid"]])
 		var bounds := Rect2(center + Vector2(-22, -42) * scale_factor, Vector2(44, 60) * scale_factor)
-		if hero["role"] == "warrior":
+		if not sprite_set(hero).is_empty():
 			bounds = Rect2(center + Vector2(-28, -44) * scale_factor, Vector2(56, 60) * scale_factor)
 		var distance_to_body := pointer.distance_squared_to(center + Vector2(0, -12) * scale_factor)
 		if bounds.has_point(pointer) and distance_to_body < best_distance:

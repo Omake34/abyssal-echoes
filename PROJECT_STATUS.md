@@ -9,6 +9,12 @@
 
 ## CURRENT TASK
 
+**Full cast animated — November 10, 2026**
+
+`tools/blender/render_characters.py` builds and animates original Archer, Mage, Cleric, Assassin, Captain, and Raider models in one background run (`-- name ...` re-renders a subset; the saved `art/source/blender/character_animation_pilot.blend` always holds all six). Same camera, timings, atlas layout, and foot pivot as the Warrior; part-name tags (`L:` legs, `H:` hem, `W:` weapon arm) drive one shared pose function. Every unit in a normal run is now a rendered sprite: all six hero classes, `raider` (every physical enemy), and `hexer` (Riftbound). Only the fixture-only Ash Hound keeps the vector figure. `ArenaBoard` now loads atlases on first draw instead of preloading (each is ~7.8 MB of VRAM), and every rendered hero gets the wider pick bounds.
+
+Verified with Godot 4.6.3 on an isolated copy: **1191 animation, 193 arena, 98 run-arena, 110 saved-party, 46 reward-flow, 400 encounter — all passed**. All frames keep 19+ px margin. Reviewed every atlas and `art/previews/blender_pilot/cast_preparation_1280x720.png` / `cast_battle_1280x720.png`. Open: bosses share the Raider/Riftbound look; 1080p and performance acceptance.
+
 **Riftbound sentinel animation (Hex Weaver) — November 9, 2026**
 
 `tools/blender/render_riftbound_animation.py` renders the second animated character with the Warrior's camera, frame size, timings, atlas layout, and foot pivot. `ArenaBoard.sprite_set()` maps hero `warrior` and enemy `hexer` to their atlases; every other role keeps the vector figure. The same event rules drive both. The sentinel is rendered at 90% scale about its feet: at full size its staff tip sat 1–5 px from the canvas top and clipped on hit/cast tilts. Every frame now has at least 19 px of headroom, and it still stands taller than the Warrior.

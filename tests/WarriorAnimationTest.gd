@@ -87,7 +87,12 @@ func run() -> void:
 			break
 	check(not hexer.is_empty(), "fixture encounter has a Hex Weaver")
 	check(ArenaBoard.sprite_set(hexer) == "riftbound", "Hex Weaver uses the Riftbound atlas")
-	check(ArenaBoard.sprite_set(model.get_unit(4)) == "", "unrendered roles keep the fallback figure")
+	for unit in model.units:
+		var expected: String = unit["role"] if unit["hero"] else {"raider": "raider", "hexer": "riftbound", "hound": ""}[unit["role"]]
+		check(ArenaBoard.sprite_set(unit) == expected, "%s uses sprite set '%s'" % [unit["name"], expected])
+	for role in ["assassin", "captain"]:
+		check(ArenaBoard.sprite_set({"hero": true, "role": role}) == role, "run-only hero class has a sprite: " + role)
+	check(ArenaBoard.sprite_set({"hero": false, "role": "warrior"}) == "", "enemies never borrow hero sprites")
 	check(board.visual_facings[hexer["uid"]] == "west", "enemies face the heroes at setup")
 	model.start()
 	model.take_events()
@@ -107,8 +112,8 @@ func run() -> void:
 		board._process(0.2)
 	check(board.visual_animations[hexer["uid"]]["state"] == "death", "Hex Weaver death holds")
 	for set_name in ArenaBoard.SPRITE_SETS:
-		for facing in ArenaBoard.SPRITE_SETS[set_name]:
-			var texture: Texture2D = ArenaBoard.SPRITE_SETS[set_name][facing]
+		for facing in ArenaBoard.SPRITE_FACINGS:
+			var texture := ArenaBoard.atlas(set_name, facing)
 			check(texture.get_size() == Vector2(1536, 1280), "atlas dimensions: %s/%s" % [set_name, facing])
 			var image := texture.get_image()
 			for state in ArenaBoard.ANIMATION_ROWS:

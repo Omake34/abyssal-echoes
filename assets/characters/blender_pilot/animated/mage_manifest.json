@@ -1,0 +1,36 @@
+{
+  "author": "Original Abyssal Echoes procedural geometry and object-keyframe animation",
+  "source": "art/source/blender/character_animation_pilot.blend",
+  "generator": "tools/blender/render_characters.py",
+  "frame_size": [
+    256,
+    256
+  ],
+  "columns": 6,
+  "rows": [
+    "idle",
+    "move",
+    "attack",
+    "hit",
+    "death"
+  ],
+  "durations_seconds": {
+    "idle": 1.2,
+    "move": 0.6,
+    "attack": 0.42,
+    "hit": 0.24,
+    "death": 0.72
+  },
+  "foot_pivot_normalized": [
+    0.5,
+    0.8250480592250824
+  ],
+  "facings": {
+    "south": "assets/characters/blender_pilot/animated/mage_south.png",
+    "east": "assets/characters/blender_pilot/animated/mage_east.png",
+    "north": "assets/characters/blender_pilot/animated/mage_north.png",
+    "west": "assets/characters/blender_pilot/animated/mage_west.png"
+  },
+  "attack_contact_frame": 0,
+  "notes": "East/west use three-quarter poses. Death holds final frame. No root motion."
+}
