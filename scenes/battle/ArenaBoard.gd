@@ -1,6 +1,7 @@
 class_name ArenaBoard
 extends Control
 ## Presentation only: interpolation never changes simulation positions.
+# PURPOSE: Draw the arena and the Blender Warrior pilot without changing combat rules.
 
 signal selection_changed(uid: int)
 signal formation_changed
@@ -10,10 +11,24 @@ const TEAL := Color("6ed7cc")
 const VIOLET := Color("b294f7")
 const HERO_COLORS := {"warrior": Color("cf9d68"), "archer": Color("79cba4"),
 	"mage": Color("ab9ae8"), "cleric": Color("eedaa0")}
+const WARRIOR_SPRITES := {
+	"east": preload("res://assets/characters/blender_pilot/animated/warrior_east.png"),
+	"west": preload("res://assets/characters/blender_pilot/animated/warrior_west.png"),
+	"north": preload("res://assets/characters/blender_pilot/animated/warrior_north.png"),
+	"south": preload("res://assets/characters/blender_pilot/animated/warrior_south.png")}
+const ANIMATION_ROWS := {"idle": 0, "move": 1, "attack": 2, "hit": 3, "death": 4}
+const ANIMATION_SECONDS := {"idle": 1.2, "move": 0.6, "attack": 0.42, "hit": 0.24, "death": 0.72}
+# Fixed render canvas: all directions share the same projected ground anchor.
+const WARRIOR_CANVAS := Vector2(72, 72)
+const WARRIOR_FOOT_PIVOT := Vector2(0.5, 0.82505)
 
 var simulation: ArenaSimulation
 var selected := 0
 var visual_positions := {}
+var visual_facings := {}
+var visual_animations := {}
+var visuals_paused := false
+var playback_rate := 1.0
 var effects: Array[Dictionary] = []
 var board_rect := Rect2()
 var cell_size := 40.0
@@ -35,30 +50,122 @@ func setup(model: ArenaSimulation) -> void:
 	cancel_drag()
 	simulation = model
 	visual_positions.clear()
+	visual_facings.clear()
+	visual_animations.clear()
 	effects.clear()
 	for unit in model.units:
 		visual_positions[unit["uid"]] = Vector2(unit["cell"])
+		visual_facings[unit["uid"]] = "east" if unit["hero"] else "west"
+		visual_animations[unit["uid"]] = {"state": "idle" if unit["alive"] else "death", "age": 0.0 if unit["alive"] else 0.72}
 	queue_redraw()
 
 func consume_events(batch: Array[Dictionary]) -> void:
 	for event in batch:
 		if event["kind"] == "result":
 			continue
+		# Events report results, never requests to apply damage. Contact is frame zero.
+		if event["kind"] == "death":
+			_trigger_animation(int(event["target"]), "death")
+		elif event["kind"] == "damage":
+			if event.get("text", "") not in ["Burn", "Bleed"]:
+				_trigger_animation(int(event["source"]), "attack")
+			if int(event.get("amount", 0)) > 0:
+				_trigger_animation(int(event["target"]), "hit")
 		var effect := event.duplicate()
 		effect["age"] = 0.0
+		# Simultaneous hits on one target stack in lanes instead of overprinting.
+		var lane := 0
+		for other in effects:
+			if other.get("to") == effect.get("to") and float(other["age"]) < 0.3:
+				lane += 1
+		effect["lane"] = lane % 3
 		effects.append(effect)
 
 func _process(delta: float) -> void:
+	# Match the simulation's pause and speed; animation never advances the simulation.
+	delta = 0.0 if visuals_paused else minf(delta, 0.25) * playback_rate
 	clock += delta
 	if simulation == null:
 		return
 	for unit in simulation.units:
 		var uid: int = unit["uid"]
+		_update_animation(unit, delta)
+		_update_visual_facing(unit)
 		visual_positions[uid] = Vector2(visual_positions.get(uid, unit["cell"])).lerp(Vector2(unit["cell"]), minf(1.0, delta * 16.0))
 	for effect in effects:
 		effect["age"] += delta
 	effects = effects.filter(func(e: Dictionary) -> bool: return e["age"] < 0.85)
 	queue_redraw()
+
+func _trigger_animation(uid: int, state: String) -> void:
+	if simulation == null:
+		return
+	var unit := simulation.get_unit(uid)
+	if unit.is_empty() or not unit["hero"] or unit["role"] != "warrior":
+		return
+	if not unit["alive"] and state != "death":
+		return
+	var current: Dictionary = visual_animations.get(uid, {"state": "idle", "age": 0.0})
+	if current["state"] == "death":
+		return
+	# Incoming hits must not hide the Warrior's attack; AoE events share one pose.
+	if state == "hit" and current["state"] == "attack":
+		return
+	# Back-to-back incoming hits would otherwise pin the Warrior on frame zero.
+	if state == "hit" and current["state"] == "hit" and float(current["age"]) < ANIMATION_SECONDS["hit"] * 0.5:
+		return
+	if state == current["state"] and float(current["age"]) == 0.0:
+		return
+	visual_animations[uid] = {"state": state, "age": 0.0}
+
+func _update_animation(unit: Dictionary, delta: float) -> void:
+	if not unit["hero"] or unit["role"] != "warrior":
+		return
+	var uid: int = unit["uid"]
+	var animation: Dictionary = visual_animations[uid]
+	if not unit["alive"] and animation["state"] != "death":
+		_trigger_animation(uid, "death")
+		animation = visual_animations[uid]
+	if delta <= 0.0:
+		return
+	animation["age"] += delta
+	if animation["state"] == "death":
+		animation["age"] = minf(animation["age"], ANIMATION_SECONDS["death"])
+		return
+	if animation["state"] in ["attack", "hit"] and animation["age"] < ANIMATION_SECONDS[animation["state"]]:
+		return
+	var distance := Vector2(unit["cell"]).distance_squared_to(Vector2(visual_positions[uid]))
+	var next_state := "move" if simulation.running and distance > 0.0025 else "idle"
+	if animation["state"] != next_state:
+		animation["state"] = next_state
+		animation["age"] = 0.0
+	else:
+		animation["age"] = fmod(animation["age"], ANIMATION_SECONDS[next_state])
+
+func _draw_warrior(uid: int, tint: Color = Color.WHITE) -> void:
+	var animation: Dictionary = visual_animations.get(uid, {"state": "idle", "age": 0.0})
+	var state: String = animation["state"]
+	var frame := mini(5, int(float(animation["age"]) / ANIMATION_SECONDS[state] * 6.0))
+	var texture: Texture2D = WARRIOR_SPRITES[visual_facings.get(uid, "east")]
+	var origin := Vector2(0, 10) - WARRIOR_CANVAS * WARRIOR_FOOT_PIVOT
+	var region := Rect2(Vector2(frame, ANIMATION_ROWS[state]) * 256.0, Vector2(256, 256))
+	draw_texture_rect_region(texture, Rect2(origin, WARRIOR_CANVAS), region, tint)
+
+func _update_visual_facing(unit: Dictionary) -> void:
+	# Read simulation state only; movement takes priority over the attack target.
+	if not unit["alive"]:
+		return
+	var direction := Vector2(unit["cell"]) - Vector2(visual_positions.get(unit["uid"], unit["cell"]))
+	if direction.length_squared() < 0.0025 and int(unit.get("target", -1)) >= 0:
+		var target := simulation.get_unit(int(unit["target"]))
+		if not target.is_empty() and target["alive"]:
+			direction = Vector2(target["cell"]) - Vector2(unit["cell"])
+	if direction.length_squared() < 0.0025:
+		return
+	if absf(direction.x) >= absf(direction.y):
+		visual_facings[unit["uid"]] = "east" if direction.x > 0 else "west"
+	else:
+		visual_facings[unit["uid"]] = "south" if direction.y > 0 else "north"
 
 func _layout_board() -> void:
 	cell_size = minf((size.x - 72.0) / ArenaSimulation.BOARD_SIZE.x, (size.y - 56.0) / ArenaSimulation.BOARD_SIZE.y)
@@ -153,6 +260,8 @@ func _hero_at_pointer(pointer: Vector2) -> Dictionary:
 	for hero in simulation.living(true):
 		var center := cell_center(visual_positions[hero["uid"]])
 		var bounds := Rect2(center + Vector2(-22, -42) * scale_factor, Vector2(44, 60) * scale_factor)
+		if hero["role"] == "warrior":
+			bounds = Rect2(center + Vector2(-28, -44) * scale_factor, Vector2(56, 60) * scale_factor)
 		var distance_to_body := pointer.distance_squared_to(center + Vector2(0, -12) * scale_factor)
 		if bounds.has_point(pointer) and distance_to_body < best_distance:
 			closest = hero
@@ -247,6 +356,10 @@ func _draw_unit(unit: Dictionary, position_override: Vector2 = Vector2.INF) -> v
 	var hero: bool = unit["hero"]
 	var color: Color = HERO_COLORS.get(unit["role"], Color("bb6a78"))
 	if not unit["alive"]:
+		if hero and unit["role"] == "warrior":
+			draw_set_transform(point, 0, Vector2.ONE * scale_factor)
+			_draw_warrior(uid, Color(0.65, 0.65, 0.7, 0.75))
+			draw_set_transform(Vector2.ZERO)
 		draw_line(point + Vector2(-7, -5), point + Vector2(7, 5), Color("554657"), 3)
 		draw_line(point + Vector2(7, -5), point + Vector2(-7, 5), Color("554657"), 3)
 		return
@@ -258,7 +371,9 @@ func _draw_unit(unit: Dictionary, position_override: Vector2 = Vector2.INF) -> v
 	var facing := 1.0 if hero else -1.0
 	var bob := sin(clock * 3.4 + uid) * 1.0
 	# Simple original cloaked figures, with role-specific weapons and silhouettes.
-	if unit["role"] == "hound":
+	if hero and unit["role"] == "warrior":
+		_draw_warrior(uid)
+	elif unit["role"] == "hound":
 		draw_colored_polygon(PackedVector2Array([Vector2(-15, 4), Vector2(-12, -10), Vector2(6, -8), Vector2(16, -17), Vector2(14, 6)]), color.darkened(0.25))
 		draw_line(Vector2(-9, 2), Vector2(-11, 12), color, 4)
 		draw_line(Vector2(8, 2), Vector2(11, 12), color, 4)
@@ -293,9 +408,11 @@ func _draw_unit(unit: Dictionary, position_override: Vector2 = Vector2.INF) -> v
 	draw_rect(bar, Color("181823"))
 	draw_rect(Rect2(bar.position, Vector2(bar.size.x * float(unit["hp"]) / unit["max_hp"], bar.size.y)), TEAL if hero else Color("e27f86"))
 	if unit["shield"] > 0:
-		draw_arc(point, 21 * scale_factor, 0, TAU, 40, Color(0.4, 0.75, 1.0, 0.45), 2, true)
+		# Shield reads on the HP bar so it never covers the figure.
+		var shield_ratio := minf(1.0, float(unit["shield"]) / float(unit["max_hp"]))
+		draw_rect(Rect2(bar.position - Vector2(0, 2 * scale_factor), Vector2(bar.size.x * shield_ratio, 2 * scale_factor)), Color("7ec4ff"))
 	if unit["taunt_left"] > 0:
-		_text(point + Vector2(16, -29), "!", 15, GOLD)
+		_text(bar.end + Vector2(3, 2), "!", 13, GOLD)
 	if unit["burn_left"] > 0:
 		draw_circle(point + Vector2(-13, -12), 4 + sin(clock * 10.0), Color("eb9454"))
 	if hero:
@@ -314,7 +431,7 @@ func _draw_effect(effect: Dictionary) -> void:
 	elif effect["text"] == "Burn" or kind == "burn":
 		color = Color("f3a66e")
 	if kind == "taunt":
-		draw_arc(to, (0.4 + age * 3.0) * cell_size, 0, TAU, 60, Color(GOLD, 1.0 - age / 0.85), 2, true)
+		draw_arc(to, (0.4 + age * 1.2) * cell_size, 0, TAU, 60, Color(GOLD, 0.45 * (1.0 - age / 0.85)), 1.5, true)
 	elif kind in ["damage", "heal"] and age < 0.30:
 		if from.distance_to(to) > cell_size * 1.5:
 			var head := from.lerp(to, minf(1.0, age / 0.22))
@@ -326,7 +443,12 @@ func _draw_effect(effect: Dictionary) -> void:
 		var label := ("+" if kind == "heal" else "") + str(effect["amount"])
 		if effect["amount"] == 0:
 			label = "BLOCK"
-		_text(to + Vector2(-8, -31 - age * 28), label, 15, Color(color, 1.0 - age / 0.85))
+		var scale_factor := clampf(cell_size / 46.0, 0.65, 1.2)
+		var font_size := 12 if effect["amount"] == 0 else 13
+		var width := ThemeDB.fallback_font.get_string_size(label, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size).x
+		var lane: int = effect.get("lane", 0)
+		var lift := 50.0 * scale_factor + lane * 13.0 + age * 22.0
+		_text(to + Vector2(-width * 0.5 + (lane - 1) * 6.0 * float(lane > 0), -lift), label, font_size, Color(color, 1.0 - age / 0.85))
 
 func _text(at: Vector2, value: String, font_size: int, color: Color) -> void:
 	draw_string(ThemeDB.fallback_font, at + Vector2(1, 1), value, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size, Color(0, 0, 0, color.a))

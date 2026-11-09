@@ -429,6 +429,8 @@ func _unhandled_key_input(event: InputEvent) -> void:
 func _process(delta: float) -> void:
 	if not is_instance_valid(board):
 		return
+	board.visuals_paused = paused
+	board.playback_rate = playback_speed
 	if simulation.running and not paused:
 		accumulator += minf(delta, 0.25) * playback_speed
 		while accumulator >= ArenaSimulation.STEP and simulation.running:

@@ -1,17 +1,50 @@
 # PROJECT STATUS
 ## Abyssal Echoes: Void Weaver — Live Development Tracker
 
-**Last Updated:** November 2, 2026
-**Current Phase:** Playable prototype — shared arena abilities and equipment
+**Last Updated:** November 9, 2026
+**Current Phase:** Playable prototype — v0.2 arena integrated into normal runs
 **Overall Progress:** Feature scaffolding exists; tactical gameplay acceptance criteria remain open
 
 ---
 
 ## CURRENT TASK
-> **Shared Arena Trial — resource-defined abilities and preparation equipment implemented**
-> Open ARENA TRIAL from the main menu. Four heroes fight in a shared arena with movement, range, local taunt/shield, meaningful healing, spell counters, two Archer patterns, and two encounters.
-> Playtest instructions, exact trial rules, validation, and remaining work: `docs/ARENA_TRIAL.md`.
-> Normal run routing and saves remain on the existing battle system. Next: expand builds and establish a tested run/reward adapter with inventory/save compatibility.
+
+**Warrior animation pilot — November 9, 2026**
+
+`tools/blender/render_warrior_animation.py` renders idle, move, attack, hit, and death (6 frames each, 256 x 256) in four facings to `assets/characters/blender_pilot/animated/` (one 1536 x 1280 atlas per facing, plus manifest). Editable source: `art/source/blender/warrior_animation_pilot.blend`. `ArenaBoard.gd` plays them from simulation events only: damage events start the attack at contact frame zero (never delaying damage), incoming direct damage plays recoil unless an attack is in progress, Burn/Bleed ticks do not swing the sword, death overrides and holds its last frame, and pause/speed/reset follow the battle controls.
+
+Verified on a fresh isolated copy with Godot 4.7.2: **164 Warrior animation checks, 193 arena, 98 production run-arena, 46 reward-flow, 110 saved-party — all passed**. Visually reviewed `animated_battle_1280x720.png` and `animated_battle_1920x1080.png`, plus live unpaused frames. Layout holds at both resolutions.
+
+Melee readability pass (presentation only): damage/heal numbers now start above the HP bar, centered, and stack in up to three rows for simultaneous hits. The shield shows as a blue strip on the HP bar instead of a ring through the body; the taunt marker sits beside the bar; the taunt pulse is fainter and smaller; back-to-back hits no longer restart a recoil in its first half. Rechecked: 165 animation, 193 arena, 98 run-arena checks passed; live frames show the Warrior's swing and recoil clearly. Remaining: numbers for a unit directly below still rise into the Warrior's cell. Other characters, performance acceptance, and the remaining art milestone stay open.
+
+Suggested commit message: `Add Blender Warrior animation pilot driven by combat events`
+
+**Warrior sprite integrated — November 9, 2026**
+
+`scenes/battle/ArenaBoard.gd` now renders the Blender Warrior in both production battles and the fixture, with movement/target-facing and a shared projected foot pivot. Three-quarter east/west images replace the unreadably thin side views. Existing HP, selection, shield/status, death, and drag/swap behavior is retained; picking bounds accommodate the rendered equipment. Combat and save logic are unchanged.
+
+Verified final changes in an isolated project/save directory on Godot 4.7.2: **193 arena checks + 98 production run-arena checks passed**. Visually reviewed 1280 x 720 preparation, drag/swap, and paused-combat captures under `art/previews/blender_pilot/`. Updated the generator, asset manifest, and pilot README. Static poses only; animation, remaining roster/environment integration, 1080p review, and performance acceptance remain open.
+
+Suggested commit message: `Integrate Blender Warrior sprites into the shared arena`
+
+**First Blender renders — November 9, 2026**
+
+Created original procedural Warrior and Riftbound sentinel models, a modular ruin diorama, reusable materials/lights/camera, and `tools/blender/render_pilot.py`. Rendered two 1440 x 1000 arena images and eight transparent 256 x 256 character facing images. Editable source is `art/source/blender/abyssal_pilot.blend`; previews and provenance are in `art/previews/blender_pilot/`. Render completed; beauty image and front sprites visually inspected, dimensions/alpha checked for all eight sprites. Static style study only: animation, gameplay integration, production board alignment, and performance acceptance remain open. No gameplay changes or gameplay tests this session.
+
+Suggested commit message: `Add original Blender character and arena render pilot`
+
+**PRD v3.0 revision — November 9, 2026**
+
+Updated `AbyssalEchoes_PRD.md` to match the local arena integration and distinguish implemented features, historical verification, and proposed requirements. The proposed art route uses Blender-rendered sprites/scenery with the current 2D simulation, starting with one hero, one enemy, and an arena kit. Real-time 3D remains a separate future decision. Added milestone exit criteria, asset handoff requirements, quality targets, and deferred crafting scope. No gameplay code or production art changed; existing manual-run and balance work remains open. Documentation checks only; gameplay suites were not rerun.
+
+Suggested commit message: `Revise PRD for current arena and Godot Blender art workflow`
+
+**Battle v0.2 merged into normal runs — November 5, 2026**
+
+BattleScene now uses the shared arena layout and movement. It loads saved heroes and owned skills, retains progression stats and wounded HP, migrates old formation slots, saves arena placement, and settles rewards once. Preparation supports inventory-backed equip/unequip, auto-equip, auto formation, drag/swap, pause, and speed control. The separate Arena Trial menu entry is removed. The original trial is a test fixture.
+
+The migration requirements and decisions are in `docs/ARENA_MIGRATION.md`. Verified in the isolated copy with 98 run-arena checks, 46 reward-flow checks, 193 original arena checks, 259 artwork checks, and 110 saved-party checks. A full manual run and balance tuning remain open. This integration is local and uncommitted.
+
 
 ---
 

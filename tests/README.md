@@ -1,3 +1,9 @@
+# Production arena integration checks
+
+Run `godot --headless --path "TEMP_PROJECT" res://tests/run_arena_test.tscn` in the isolated project described below. Expected result is `RUN ARENA: 98 checks, 0 failures`. Tests cover the actual production battle scene, owned inventory transfers, full-bag rejection, save/load formation, wounded heroes, every skill effect, all six classes, elite/boss encounters, pause, range, limited uses, stun, and exactly-once settlement.
+
+The original arena scene is now `res://tests/arena_fixture.tscn`. It is accessible only as a development fixture. The normal game uses `res://scenes/battle/BattleScene.tscn`.
+
 # Arena combat checks
 
 For the shared arena slice, run `godot --headless --path "TEMP_PROJECT" res://tests/arena_combat_test.tscn` after importing the isolated copy described below. Success prints `ARENA COMBAT: 193 checks, 0 failures`. The suite tests full fights and real trial controls, including mouse dragging/cancellation, resource-driven abilities, equipment rules, shelf/removal controls, and saved-run isolation. It does not award rewards or modify progression. See `docs/ARENA_TRIAL.md` for the exact prototype rules and limitations.
@@ -31,3 +37,15 @@ For an interactive gallery, run `res://tests/skill_art_review.tscn` in Godot. Ho
 To export previews with the regular renderer, pass `-- --capture-sheet="ABSOLUTE_OUTPUT.png"` for all 35 labelled icons or `-- --capture-cards="ABSOLUTE_OUTPUT.png"` for the card gallery. The review scene exits after writing the requested PNG.
 
 Use `-- --capture-tiers="ABSOLUTE_OUTPUT.png"` for a nine-card comparison of physical/red, magic/blue, and healing/green across tiers I, II, and III. It renders the real reward cards, including frame weights, rank marks, and master details.
+
+# Shared run encounter checks
+
+After importing the isolated project, run `godot --headless --path "TEMP_PROJECT" --script res://tests/RunEncounterTest.gd`. Success prints `RUN ENCOUNTER: 400 checks, 0 failures`. Covers seeded replay, encounter sizes, normal/elite/boss pools, and unknown-node fallback.
+
+# Saved-party adapter checks
+
+Run `godot --headless --path "TEMP_PROJECT" res://tests/run_party_adapter_test.tscn` in the isolated copy. Expected: `RUN PARTY: 110 checks, 0 failures`. Covers six classes, all 35 legacy skill resources, synergy and progression stats, wounded HP, old placement defaults, mutation isolation, victory HP carryover, and duplicate-completion/restart guards.
+
+## Warrior animation
+
+In the isolated copy, run `godot --headless --path "TEMP_PROJECT" res://tests/warrior_animation_test.tscn`. Expected: `WARRIOR ANIMATION: 165 checks, 0 failures`. Covers event-driven attack/hit/death states, pause, 3x speed, reset, visuals never mutating combat state, and unclipped, distinct frames in all four atlases.

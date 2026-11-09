@@ -144,7 +144,7 @@ func _run() -> void:
 	_check(is_equal_approx(second["elapsed"], 12.7) and second["hp"] == [53, 48, 110] and second["archer_damage"] == 328, "resource-driven defaults preserve the original crossfire/Ember outcome")
 	print("ARENA BALANCE: breach=", first, " crossfire/ember=", second)
 
-	var scene = load("res://scenes/battle/ArenaTrial.tscn").instantiate()
+	var scene = load("res://tests/arena_fixture.tscn").instantiate()
 	add_child(scene)
 	await get_tree().process_frame
 	await get_tree().process_frame
@@ -172,8 +172,7 @@ func _run() -> void:
 	scene.free()
 	var menu = load("res://scenes/MainMenu.tscn").instantiate()
 	add_child(menu)
-	var entry: Button = menu.get_node("MainLayout/LeftSection/ArenaTrialButton")
-	_check(entry.visible and not entry.pressed.get_connections().is_empty(), "main menu exposes a connected Arena Trial entry")
+	_check(not menu.has_node("MainLayout/LeftSection/ArenaTrialButton"), "main menu exposes only the unified run battle flow")
 	menu.free()
 	var after := JSON.stringify([RunState.party, RunState.inventory, RunState.gold, RunState.meta,
 		RunState.run_stats, RunState.pending_reward_node_id, RunState.current_node_id])

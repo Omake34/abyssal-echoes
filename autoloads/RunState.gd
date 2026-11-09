@@ -377,6 +377,7 @@ func save_run() -> void:
 			"max_hp_override": hero.get("max_hp_override", hero["data"].base_hp),
 			"atk_override": hero.get("atk_override", hero["data"].base_atk),
 			"speed_override": hero.get("speed_override", hero["data"].base_speed),
+			"arena_cell": [hero["arena_cell"].x, hero["arena_cell"].y] if hero.has("arena_cell") else [],
 			"pos_x": hero["position"].x,
 			"pos_y": hero["position"].y
 		})
@@ -460,6 +461,10 @@ func load_run() -> bool:
 			"status_effects": []
 		})
 		
+		var saved_cell = h_data.get("arena_cell", [])
+		if saved_cell is Array and saved_cell.size() == 2:
+			party.back()["arena_cell"] = Vector2i(int(saved_cell[0]), int(saved_cell[1]))
+
 	inventory.clear()
 	var loaded_inventory = data.get("inventory", [])
 	for i_path in loaded_inventory:

@@ -1,0 +1,78 @@
+{
+  "status": "Static art pilot; Warrior integrated in ArenaBoard; no rig or animation yet",
+  "author": "Original procedural Blender geometry created for Abyssal Echoes",
+  "source": "art/source/blender/abyssal_pilot.blend",
+  "generator": "tools/blender/render_pilot.py",
+  "blender": "5.2.3 LTS",
+  "camera": "Orthographic; front -Y; east/west use readable three-quarter poses",
+  "sprites": [
+    {
+      "id": "warrior_idle_south",
+      "path": "assets\\characters\\blender_pilot\\warrior_idle_south.png",
+      "size": [
+        256,
+        256
+      ]
+    },
+    {
+      "id": "warrior_idle_east",
+      "path": "assets\\characters\\blender_pilot\\warrior_idle_east.png",
+      "size": [
+        256,
+        256
+      ]
+    },
+    {
+      "id": "warrior_idle_north",
+      "path": "assets\\characters\\blender_pilot\\warrior_idle_north.png",
+      "size": [
+        256,
+        256
+      ]
+    },
+    {
+      "id": "warrior_idle_west",
+      "path": "assets\\characters\\blender_pilot\\warrior_idle_west.png",
+      "size": [
+        256,
+        256
+      ]
+    },
+    {
+      "id": "riftbound_idle_south",
+      "path": "assets\\characters\\blender_pilot\\riftbound_idle_south.png",
+      "size": [
+        256,
+        256
+      ]
+    },
+    {
+      "id": "riftbound_idle_east",
+      "path": "assets\\characters\\blender_pilot\\riftbound_idle_east.png",
+      "size": [
+        256,
+        256
+      ]
+    },
+    {
+      "id": "riftbound_idle_north",
+      "path": "assets\\characters\\blender_pilot\\riftbound_idle_north.png",
+      "size": [
+        256,
+        256
+      ]
+    },
+    {
+      "id": "riftbound_idle_west",
+      "path": "assets\\characters\\blender_pilot\\riftbound_idle_west.png",
+      "size": [
+        256,
+        256
+      ]
+    }
+  ],
+  "foot_pivot_normalized": [
+    0.5,
+    0.8250478370897238
+  ]
+}

@@ -12,3 +12,7 @@ export_presets.cfg
 .DS_Store
 *.tmp
 *.log
+
+# Blender backups and regenerable render intermediates
+*.blend1
+art/source/blender/warrior_frames/

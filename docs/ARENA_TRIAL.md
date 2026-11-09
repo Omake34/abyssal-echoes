@@ -1,6 +1,12 @@
+# Production integration — November 5, 2026
+
+The arena is now the normal run battle screen, version 0.2. New Run and Continue lead to the same BattleScene, using saved heroes, owned skills, map encounters, health carryover, and normal rewards. The standalone menu entry has been removed. See `ARENA_MIGRATION.md` for the requirements, integration decisions, and verification.
+
+The following notes document the original deterministic trial fixture. It can be launched for development through `res://tests/arena_fixture.tscn` and is covered by the original arena regression tests.
+
 # Shared arena trial
 
-Implemented November 2, 2026. Open **ARENA TRIAL** from the main menu, or run `res://scenes/battle/ArenaTrial.tscn` in Godot.
+Implemented November 2, 2026. Open **ARENA TRIAL** from the main menu, or run `res://tests/arena_fixture.tscn` in Godot.
 
 This is the first playable slice from the reference-analysis rebuild plan. It uses original procedural character drawings and the existing skill illustrations. Its encounters and tuning are our own implementation, not recovered reference-game constants.
 
@@ -57,3 +63,15 @@ The default formation finishes The breach in approximately 12.1 simulation secon
 The normal run still uses the old battle scene. Its formation, traits, and healing have not been silently changed by this prototype. The trial offers reusable catalog equipment rather than saved-run inventory consumption. It does not yet support all 35 legacy skill effects, crafting, persistent loadouts across visits, critical hits, evasion, enemy special abilities, or world obstacles/line-of-sight rules. Character art is procedural prototype art.
 
 Next milestone: expand authored builds and establish the encounter/reward adapter and save compatibility before routing real map battles through the arena. Inventory-backed equipment needs an explicit adapter between the legacy skill schema and the arena definitions. Explicit merge/recast work remains a later milestone.
+
+## Normal-run integration progress — November 5, 2026
+
+The first integration step extracts normal-run enemy selection into `RunEncounterAdapter`. `BattleScene` uses the shared selector; normal, elite, boss, and fallback pools retain their existing rules. Callers can inject a seeded random generator for reproducible encounters. The adapter does not mutate party, inventory, progression, or pending rewards.
+
+Verified in an isolated project/user directory: encounter selection 400 checks; reward flow 46 checks, including legacy saves, inventory-full claims, duplicate claims, and pending-reward resume.
+
+Arena routing remains pending. Legacy `SkillData` has cooldown ticks, limited-use abilities, class restrictions, and tier IV skills; arena `ArenaAbilityData` has event triggers and tiers I–III. An explicit gameplay conversion policy and tests are required before saved loadouts can enter arena combat. Hero traits, enemy skills/targeting, HP/stat carryover, and exactly-once battle rewards must also be adapted. Do not silently replace equipped skills with trial presets.
+
+The saved-party boundary is now shared through `RunPartyAdapter.hero_snapshot`, used by `BattleManager`. It preserves legacy skill resource identity (including tier IV), synergy calculations, meta overrides, wounded HP, and party identity, while separating mutable runtime arrays. Missing legacy placement fields fall back to defaults. This is a legacy combat snapshot, not a conversion to arena abilities.
+
+Battle completion is guarded per initialized encounter: duplicate completion cannot increment wins or emit the global result again, and finished battles cannot restart. Reinitializing creates a fresh encounter. Verified: 110 party/skill/completion checks, 46 reward checks, and 193 arena regression checks. Remaining arena integration includes ability/trait/enemy-behavior conversion and connecting this snapshot to the arena simulation and run UI.
