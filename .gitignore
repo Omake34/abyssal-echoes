@@ -16,3 +16,4 @@ export_presets.cfg
 # Blender backups and regenerable render intermediates
 *.blend1
 art/source/blender/warrior_frames/
+art/source/blender/riftbound_frames/

@@ -1,7 +1,7 @@
 class_name ArenaBoard
 extends Control
 ## Presentation only: interpolation never changes simulation positions.
-# PURPOSE: Draw the arena and the Blender Warrior pilot without changing combat rules.
+# PURPOSE: Draw the arena and the Blender sprite pilots without changing combat rules.
 
 signal selection_changed(uid: int)
 signal formation_changed
@@ -11,16 +11,23 @@ const TEAL := Color("6ed7cc")
 const VIOLET := Color("b294f7")
 const HERO_COLORS := {"warrior": Color("cf9d68"), "archer": Color("79cba4"),
 	"mage": Color("ab9ae8"), "cleric": Color("eedaa0")}
-const WARRIOR_SPRITES := {
-	"east": preload("res://assets/characters/blender_pilot/animated/warrior_east.png"),
-	"west": preload("res://assets/characters/blender_pilot/animated/warrior_west.png"),
-	"north": preload("res://assets/characters/blender_pilot/animated/warrior_north.png"),
-	"south": preload("res://assets/characters/blender_pilot/animated/warrior_south.png")}
+# Blender-rendered atlases, keyed by sprite set. Both share one camera, so one canvas and pivot.
+const SPRITE_SETS := {
+	"warrior": {
+		"east": preload("res://assets/characters/blender_pilot/animated/warrior_east.png"),
+		"west": preload("res://assets/characters/blender_pilot/animated/warrior_west.png"),
+		"north": preload("res://assets/characters/blender_pilot/animated/warrior_north.png"),
+		"south": preload("res://assets/characters/blender_pilot/animated/warrior_south.png")},
+	"riftbound": {
+		"east": preload("res://assets/characters/blender_pilot/animated/riftbound_east.png"),
+		"west": preload("res://assets/characters/blender_pilot/animated/riftbound_west.png"),
+		"north": preload("res://assets/characters/blender_pilot/animated/riftbound_north.png"),
+		"south": preload("res://assets/characters/blender_pilot/animated/riftbound_south.png")}}
 const ANIMATION_ROWS := {"idle": 0, "move": 1, "attack": 2, "hit": 3, "death": 4}
 const ANIMATION_SECONDS := {"idle": 1.2, "move": 0.6, "attack": 0.42, "hit": 0.24, "death": 0.72}
-# Fixed render canvas: all directions share the same projected ground anchor.
-const WARRIOR_CANVAS := Vector2(72, 72)
-const WARRIOR_FOOT_PIVOT := Vector2(0.5, 0.82505)
+# Fixed render canvas: all directions and sets share the same projected ground anchor.
+const SPRITE_CANVAS := Vector2(72, 72)
+const SPRITE_FOOT_PIVOT := Vector2(0.5, 0.82505)
 
 var simulation: ArenaSimulation
 var selected := 0
@@ -101,7 +108,7 @@ func _trigger_animation(uid: int, state: String) -> void:
 	if simulation == null:
 		return
 	var unit := simulation.get_unit(uid)
-	if unit.is_empty() or not unit["hero"] or unit["role"] != "warrior":
+	if unit.is_empty() or sprite_set(unit).is_empty():
 		return
 	if not unit["alive"] and state != "death":
 		return
@@ -118,8 +125,16 @@ func _trigger_animation(uid: int, state: String) -> void:
 		return
 	visual_animations[uid] = {"state": state, "age": 0.0}
 
+## Which rendered atlas a unit uses; empty means the vector fallback figure.
+static func sprite_set(unit: Dictionary) -> String:
+	if unit["hero"] and unit["role"] == "warrior":
+		return "warrior"
+	if not unit["hero"] and unit["role"] == "hexer":
+		return "riftbound"
+	return ""
+
 func _update_animation(unit: Dictionary, delta: float) -> void:
-	if not unit["hero"] or unit["role"] != "warrior":
+	if sprite_set(unit).is_empty():
 		return
 	var uid: int = unit["uid"]
 	var animation: Dictionary = visual_animations[uid]
@@ -142,14 +157,14 @@ func _update_animation(unit: Dictionary, delta: float) -> void:
 	else:
 		animation["age"] = fmod(animation["age"], ANIMATION_SECONDS[next_state])
 
-func _draw_warrior(uid: int, tint: Color = Color.WHITE) -> void:
+func _draw_sprite(uid: int, set_name: String, tint: Color = Color.WHITE) -> void:
 	var animation: Dictionary = visual_animations.get(uid, {"state": "idle", "age": 0.0})
 	var state: String = animation["state"]
 	var frame := mini(5, int(float(animation["age"]) / ANIMATION_SECONDS[state] * 6.0))
-	var texture: Texture2D = WARRIOR_SPRITES[visual_facings.get(uid, "east")]
-	var origin := Vector2(0, 10) - WARRIOR_CANVAS * WARRIOR_FOOT_PIVOT
+	var texture: Texture2D = SPRITE_SETS[set_name][visual_facings.get(uid, "east")]
+	var origin := Vector2(0, 10) - SPRITE_CANVAS * SPRITE_FOOT_PIVOT
 	var region := Rect2(Vector2(frame, ANIMATION_ROWS[state]) * 256.0, Vector2(256, 256))
-	draw_texture_rect_region(texture, Rect2(origin, WARRIOR_CANVAS), region, tint)
+	draw_texture_rect_region(texture, Rect2(origin, SPRITE_CANVAS), region, tint)
 
 func _update_visual_facing(unit: Dictionary) -> void:
 	# Read simulation state only; movement takes priority over the attack target.
@@ -355,10 +370,11 @@ func _draw_unit(unit: Dictionary, position_override: Vector2 = Vector2.INF) -> v
 	var scale_factor := clampf(cell_size / 46.0, 0.65, 1.2)
 	var hero: bool = unit["hero"]
 	var color: Color = HERO_COLORS.get(unit["role"], Color("bb6a78"))
+	var rendered := sprite_set(unit)
 	if not unit["alive"]:
-		if hero and unit["role"] == "warrior":
+		if not rendered.is_empty():
 			draw_set_transform(point, 0, Vector2.ONE * scale_factor)
-			_draw_warrior(uid, Color(0.65, 0.65, 0.7, 0.75))
+			_draw_sprite(uid, rendered, Color(0.65, 0.65, 0.7, 0.75))
 			draw_set_transform(Vector2.ZERO)
 		draw_line(point + Vector2(-7, -5), point + Vector2(7, 5), Color("554657"), 3)
 		draw_line(point + Vector2(7, -5), point + Vector2(-7, 5), Color("554657"), 3)
@@ -371,8 +387,8 @@ func _draw_unit(unit: Dictionary, position_override: Vector2 = Vector2.INF) -> v
 	var facing := 1.0 if hero else -1.0
 	var bob := sin(clock * 3.4 + uid) * 1.0
 	# Simple original cloaked figures, with role-specific weapons and silhouettes.
-	if hero and unit["role"] == "warrior":
-		_draw_warrior(uid)
+	if not rendered.is_empty():
+		_draw_sprite(uid, rendered)
 	elif unit["role"] == "hound":
 		draw_colored_polygon(PackedVector2Array([Vector2(-15, 4), Vector2(-12, -10), Vector2(6, -8), Vector2(16, -17), Vector2(14, 6)]), color.darkened(0.25))
 		draw_line(Vector2(-9, 2), Vector2(-11, 12), color, 4)

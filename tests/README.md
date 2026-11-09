@@ -48,4 +48,4 @@ Run `godot --headless --path "TEMP_PROJECT" res://tests/run_party_adapter_test.t
 
 ## Warrior animation
 
-In the isolated copy, run `godot --headless --path "TEMP_PROJECT" res://tests/warrior_animation_test.tscn`. Expected: `WARRIOR ANIMATION: 165 checks, 0 failures`. Covers event-driven attack/hit/death states, pause, 3x speed, reset, visuals never mutating combat state, and unclipped, distinct frames in all four atlases.
+In the isolated copy, run `godot --headless --path "TEMP_PROJECT" res://tests/warrior_animation_test.tscn`. Expected: `WARRIOR ANIMATION: 317 checks, 0 failures`. Covers the Warrior and the Riftbound sentinel (Hex Weaver role): event-driven attack/hit/death states, pause, 3x speed, reset, visuals never mutating combat state, and unclipped, distinct frames in all eight atlases.

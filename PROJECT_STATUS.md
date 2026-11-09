@@ -9,6 +9,12 @@
 
 ## CURRENT TASK
 
+**Riftbound sentinel animation (Hex Weaver) — November 9, 2026**
+
+`tools/blender/render_riftbound_animation.py` renders the second animated character with the Warrior's camera, frame size, timings, atlas layout, and foot pivot. `ArenaBoard.sprite_set()` maps hero `warrior` and enemy `hexer` to their atlases; every other role keeps the vector figure. The same event rules drive both. The sentinel is rendered at 90% scale about its feet: at full size its staff tip sat 1–5 px from the canvas top and clipped on hit/cast tilts. Every frame now has at least 19 px of headroom, and it still stands taller than the Warrior.
+
+Verified on an isolated copy with Godot 4.6.3 (the only binary available this session): **317 animation, 193 arena, 98 run-arena, 110 saved-party, 46 reward-flow, 400 encounter — all passed**. The real project was re-imported. East and north atlases were visually reviewed. Not yet viewed in a live battle screenshot.
+
 **Warrior animation pilot — November 9, 2026**
 
 `tools/blender/render_warrior_animation.py` renders idle, move, attack, hit, and death (6 frames each, 256 x 256) in four facings to `assets/characters/blender_pilot/animated/` (one 1536 x 1280 atlas per facing, plus manifest). Editable source: `art/source/blender/warrior_animation_pilot.blend`. `ArenaBoard.gd` plays them from simulation events only: damage events start the attack at contact frame zero (never delaying damage), incoming direct damage plays recoil unless an attack is in progress, Burn/Bleed ticks do not swing the sword, death overrides and holds its last frame, and pause/speed/reset follow the battle controls.
